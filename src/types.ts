@@ -19,3 +19,10 @@ export interface DaySchedule {
   date: string;
   sessions: Session[];
 }
+
+// 
+export interface Booking {
+  sessionId: string;
+  date: string;
+  seats: { row: number; number: number }[];
+}
