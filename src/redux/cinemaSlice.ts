@@ -1,18 +1,22 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Booking, DaySchedule, Session } from "../types";
+import type { Booking, DaySchedule, SessionDetails } from "../types";
 
 interface CinemaState {
   schedule: DaySchedule[];
+  sessionDetails: SessionDetails;
   selectedDate: string;
-  selectedSession: Session | null;
-  isLoading: boolean;
+  selectedSessionId: string | null;
+  isLoadingSchedule: boolean;
+  isLoadingSession: boolean;
 }
 
 const initialState: CinemaState = {
   schedule: [],
+  sessionDetails: {} as SessionDetails,
   selectedDate: "",
-  selectedSession: null,
-  isLoading: false,
+  selectedSessionId: null,
+  isLoadingSchedule: false,
+  isLoadingSession: false,
 };
 
 const cinemaSlice = createSlice({
@@ -21,61 +25,64 @@ const cinemaSlice = createSlice({
   reducers: {
     // Initialize schedule loading
     initializeSchedule: (state) => {
-      // Getting schedule data handled in sagas
-      state.isLoading = true;
+      state.isLoadingSchedule = true;
     },
-    // Set the schedule data
+    // Set the schedule data (list of sessions)
     setSchedule: (state, action: PayloadAction<DaySchedule[]>) => {
       state.schedule = action.payload;
       state.selectedDate = action.payload[0]?.date || "";
-      state.isLoading = false;
+      state.isLoadingSchedule = false;
     },
     // Date selection
     selectDate: (state, action: PayloadAction<string>) => {
       state.selectedDate = action.payload;
     },
+    // Load session details
+    loadSessionDetails: (state) => {
+      state.isLoadingSession = true;
+    },
+    // Set session details
+    setSessionDetails: (state, action: PayloadAction<SessionDetails>) => {
+      state.sessionDetails = action.payload;
+      state.isLoadingSession = false;
+    },
     // Session selection
-    selectSession: (state, action: PayloadAction<Session>) => {
-      state.selectedSession = action.payload;
+    selectSession: (state, action: PayloadAction<string>) => {
+      state.selectedSessionId = action.payload;
+    },
+    // Clear selected session
+    clearSelectedSession: (state) => {
+      state.selectedSessionId = null;
     },
     // Booking seats
-    bookSeats: () => {
+    bookSeats: (
+      _state,
+      _action: PayloadAction<{ row: number; number: number }[]>
+    ) => {
       // Booking logic handled in sagas
     },
     // Handle successful booking
     bookSeatsSuccess: (state, action: PayloadAction<Booking>) => {
-      const { sessionId, date, seats } = action.payload;
+      const { seats } = action.payload;
 
-      // Update the schedule with booked seats
-      state.schedule = state.schedule.map((daySchedule) => {
-        if (daySchedule.date !== date) return daySchedule;
+      // Update session details with booked seats
+      if (state.sessionDetails) {
+        const sessionDetail = state.sessionDetails;
+        sessionDetail.seats = sessionDetail.seats.map((row) =>
+          row.map((seat) => {
+            const isBooked = seats.some(
+              (s: { row: number; number: number }) =>
+                s.row === seat.row && s.number === seat.number
+            );
+            return isBooked ? { ...seat, isBooked: true } : seat;
+          })
+        );
+        sessionDetail.bookedSeats += seats.length;
+        sessionDetail.availableSeats -= seats.length;
+      }
 
-        // Update the selected session's seats
-        return {
-          ...daySchedule,
-          sessions: daySchedule.sessions.map((session) => {
-            if (session.id !== sessionId) return session;
-
-            // Mark the selected seats as booked
-            return {
-              ...session,
-              seats: session.seats.map((row) =>
-                row.map((seat) => {
-                  const isBooked = seats.some(
-                    (s: { row: number; number: number }) =>
-                      s.row === seat.row && s.number === seat.number
-                  );
-                  return isBooked ? { ...seat, isBooked: true } : seat;
-                })
-              ),
-            };
-          }),
-        };
-      });
-
-      state.selectedSession = null;
+      state.selectedSessionId = null;
     },
-    // Other reducers can be added here
   },
 });
 
@@ -83,7 +90,10 @@ export const {
   initializeSchedule,
   setSchedule,
   selectDate,
+  loadSessionDetails,
+  setSessionDetails,
   selectSession,
+  clearSelectedSession,
   bookSeats,
   bookSeatsSuccess,
 } = cinemaSlice.actions;

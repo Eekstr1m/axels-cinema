@@ -4,16 +4,15 @@ import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import CardContent from "@mui/material/CardContent";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import EventSeatIcon from "@mui/icons-material/EventSeat";
-import Chip from "@mui/material/Chip";
-import type { Session } from "../types";
+import type { SessionListItem } from "../types";
 
 export default function SessionList({
   sessions,
   onSessionSelect,
 }: {
-  sessions: Session[];
-  onSessionSelect: (session: Session) => void;
+  sessions: SessionListItem[];
+  selectedDate: string;
+  onSessionSelect: (sessionId: string) => void;
 }) {
   return (
     <Box sx={{ mb: 4 }}>
@@ -22,11 +21,6 @@ export default function SessionList({
       </Typography>
       <Grid container spacing={2}>
         {sessions.map((session) => {
-          const availableSeats = session.seats
-            .flat()
-            .filter((seat) => !seat.isBooked).length;
-          const totalSeats = session.seats.flat().length;
-
           return (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={session.id}>
               <Card
@@ -38,14 +32,14 @@ export default function SessionList({
                     boxShadow: 4,
                   },
                 }}
-                onClick={() => onSessionSelect(session)}
+                onClick={() => onSessionSelect(session.id)}
               >
                 <CardContent>
                   <Box
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      mb: 2,
+                      justifyContent: "center",
                       gap: 1,
                     }}
                   >
@@ -54,31 +48,6 @@ export default function SessionList({
                       {session.time}
                     </Typography>
                   </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      mb: 1,
-                    }}
-                  >
-                    <EventSeatIcon fontSize="small" />
-                    <Typography variant="body2" color="text.secondary">
-                      Available seats: {availableSeats} з {totalSeats}
-                    </Typography>
-                  </Box>
-
-                  <Chip
-                    label={
-                      availableSeats > 0
-                        ? "Seats available"
-                        : "No seats available"
-                    }
-                    size="small"
-                    color={availableSeats > 0 ? "success" : "error"}
-                    sx={{ mt: 1 }}
-                  />
                 </CardContent>
               </Card>
             </Grid>

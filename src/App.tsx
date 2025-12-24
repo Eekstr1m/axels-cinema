@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 // Components
 import DateSelector from "./components/DateSelector";
 import SessionList from "./components/SessionList";
@@ -9,60 +9,61 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
-// Utils
-import { generateAvailableDates } from "./utils/utils";
-import type { Session } from "./types";
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import {
+  initializeSchedule,
+  selectDate,
+  selectSession,
+  clearSelectedSession,
+  loadSessionDetails,
+} from "./redux/cinemaSlice";
+import type { RootState } from "./redux/store";
+// Types
+import type { SessionListItem } from "./types";
 
 function App() {
-  const dates = generateAvailableDates();
-  const [schedule, setSchedule] = useState(dates);
-  const [selectedDate, setSelectedDate] = useState<string>(dates[0].date || "");
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const {
+    schedule,
+    selectedDate,
+    selectedSessionId,
+    sessionDetails,
+    isLoadingSchedule,
+  } = useSelector((state: RootState) => state.cinema);
+
+  // Initialize schedule on component mount
+  useEffect(() => {
+    dispatch(initializeSchedule());
+  }, [dispatch]);
+
+  // Update selected date when schedule loads
+  useEffect(() => {
+    if (schedule.length > 0 && !selectedDate) {
+      dispatch(selectDate(schedule[0].date));
+    }
+  }, [schedule, selectedDate, dispatch]);
 
   // Get sessions for selected date
-  const getCurrentSessions = (): Session[] => {
+  const getCurrentSessions = (): SessionListItem[] => {
     const daySchedule = schedule.find((d) => d.date === selectedDate);
     return daySchedule?.sessions || [];
   };
 
-  // Handle session selection
-  const handleSessionSelect = (session: Session) => {
-    setSelectedSession(session);
-    setIsModalOpen(true);
+  // Handle date selection
+  const handleDateSelect = (date: string) => {
+    dispatch(selectDate(date));
   };
 
-  // Handle booking
-  const handleBook = (seats: { row: number; number: number }[]) => {
-    if (!selectedSession) return;
+  // Handle session selection
+  const handleSessionSelect = (sessionId: string) => {
+    dispatch(selectSession(sessionId));
+    dispatch(loadSessionDetails());
+  };
 
-    // Update the schedule with booked seats
-    setSchedule((prevSchedule) =>
-      prevSchedule.map((daySchedule) => {
-        if (daySchedule.date !== selectedDate) return daySchedule;
-
-        // Update the selected session's seats
-        return {
-          ...daySchedule,
-          sessions: daySchedule.sessions.map((session) => {
-            if (session.id !== selectedSession.id) return session;
-
-            // Mark the selected seats as booked
-            return {
-              ...session,
-              seats: session.seats.map((row) =>
-                row.map((seat) => {
-                  const isBooked = seats.some(
-                    (s) => s.row === seat.row && s.number === seat.number
-                  );
-                  return isBooked ? { ...seat, isBooked: true } : seat;
-                })
-              ),
-            };
-          }),
-        };
-      })
-    );
+  // Handle modal close
+  const handleModalClose = () => {
+    dispatch(clearSelectedSession());
   };
 
   return (
@@ -92,29 +93,33 @@ function App() {
         </Box>
       </Paper>
 
-      {schedule.length > 0 ? (
+      {isLoadingSchedule ? (
+        <Box display="flex" justifyContent="center">
+          <CircularProgress />
+        </Box>
+      ) : schedule.length > 0 ? (
         <>
           <DateSelector
             dates={schedule.map((d) => d.date)}
             selectedDate={selectedDate}
-            onDateSelect={setSelectedDate}
+            onDateSelect={handleDateSelect}
           />
           <SessionList
             sessions={getCurrentSessions()}
+            selectedDate={selectedDate}
             onSessionSelect={handleSessionSelect}
           />
         </>
       ) : (
-        <Box display="flex" justifyContent="center">
-          <CircularProgress />
-        </Box>
+        <Typography variant="body1" textAlign="center">
+          No sessions available
+        </Typography>
       )}
       <BookingModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        session={selectedSession}
+        open={!!selectedSessionId}
+        onClose={handleModalClose}
+        sessionDetails={sessionDetails}
         date={selectedDate}
-        onBook={handleBook}
       />
     </Paper>
   );

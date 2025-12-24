@@ -10,26 +10,31 @@ import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 // Icons
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import type { Seat, Session } from "../types";
+// Types
+import type { Seat, SessionDetails } from "../types";
+// Redux
+import { useDispatch } from "react-redux";
+import { bookSeats } from "../redux/cinemaSlice";
+import type { AppDispatch } from "../redux/store";
 
 export default function BookingModal({
   open,
   onClose,
   date,
-  session,
-  onBook,
+  sessionDetails,
 }: {
   open: boolean;
   onClose: () => void;
   date: string;
-  session: Session | null;
-  onBook: (seats: { row: number; number: number }[]) => void;
+  sessionDetails: SessionDetails | null;
 }) {
+  const dispatch = useDispatch<AppDispatch>();
   const [selectedSeats, setSelectedSeats] = useState<
     { row: number; number: number }[]
   >([]);
@@ -65,15 +70,24 @@ export default function BookingModal({
   };
 
   const handleBook = () => {
-    if (selectedSeats.length > 0) {
-      console.log("selectedSeats", selectedSeats);
-      onBook(selectedSeats);
+    if (selectedSeats.length && sessionDetails) {
+      dispatch(bookSeats(selectedSeats));
       setSelectedSeats([]);
       onClose();
     }
   };
 
-  if (!session) return null;
+  if (!sessionDetails || !sessionDetails.seats) {
+    return (
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogContent>
+          <Box display="flex" justifyContent="center" p={4}>
+            <CircularProgress />
+          </Box>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -103,7 +117,16 @@ export default function BookingModal({
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <AccessTimeIcon fontSize="small" color="primary" />
                 <Typography variant="body1">
-                  <strong>Time:</strong> {session?.time}
+                  <strong>Time:</strong> {sessionDetails.time}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <EventSeatIcon fontSize="small" color="primary" />
+                <Typography variant="body1">
+                  <strong>Available:</strong> {sessionDetails.availableSeats} /{" "}
+                  {sessionDetails.totalSeats}
                 </Typography>
               </Box>
             </Grid>
@@ -126,7 +149,7 @@ export default function BookingModal({
 
         {/* Seats */}
         <Box sx={{ mb: 3 }}>
-          {session.seats.map((row, rowIndex) => (
+          {sessionDetails.seats.map((row, rowIndex) => (
             <Box
               key={rowIndex}
               sx={{
