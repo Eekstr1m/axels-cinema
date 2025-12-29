@@ -33,7 +33,7 @@ import {
   SelectedSeatsInfo,
   CancelButton,
   BookButton,
-} from "../styled/BookingModal.styled";
+} from "../styled/components/BookingModal.styled";
 
 // Other
 import { formatDate } from "../utils/utils";

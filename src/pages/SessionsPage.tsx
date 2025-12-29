@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // Components
-import { DateSelector, SessionList, BookingModal } from ".";
+import { DateSelector, SessionList, BookingModal } from "../components/.";
 
 // MUI Components
 import CircularProgress from "@mui/material/CircularProgress";
@@ -16,13 +16,13 @@ import {
   HeaderPaper,
   LoadingBox,
   StyledPaper,
-} from "../styled/App.styled";
+} from "../styled/pages/SessionsPage.styled";
 
 // Other
 import { generateAvailableDates } from "../utils/utils";
 import type { Session } from "../types";
 
-function App() {
+export default function SessionsPage() {
   const dates = generateAvailableDates();
   const [schedule, setSchedule] = useState(dates);
   const [selectedDate, setSelectedDate] = useState<string>(dates[0].date || "");
@@ -111,5 +111,3 @@ function App() {
     </StyledPaper>
   );
 }
-
-export default App;

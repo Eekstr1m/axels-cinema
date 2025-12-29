@@ -12,7 +12,7 @@ import {
   SessionsHeading,
   SessionTimeText,
   TimeBox,
-} from "../styled/SessionList.styled";
+} from "../styled/components/SessionList.styled";
 
 // MUI Icons
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
