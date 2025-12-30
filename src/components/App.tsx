@@ -1,17 +1,26 @@
 import { useState } from "react";
+
 // Components
-import DateSelector from "./components/DateSelector";
-import SessionList from "./components/SessionList";
-import BookingModal from "./components/BookingModal";
+import { DateSelector, SessionList, BookingModal } from ".";
+
 // MUI Components
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
+
+// MUI Icons
 import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
-// Utils
-import { generateAvailableDates } from "./utils/utils";
-import type { Session } from "./types";
+
+// Styled Components
+import {
+  CinemaTitle,
+  HeaderBox,
+  HeaderPaper,
+  LoadingBox,
+  StyledPaper,
+} from "../styled/App.styled";
+
+// Other
+import { generateAvailableDates } from "../utils/utils";
+import type { Session } from "../types";
 
 function App() {
   const dates = generateAvailableDates();
@@ -66,31 +75,14 @@ function App() {
   };
 
   return (
-    <Paper elevation={1} sx={{ p: 4 }}>
+    <StyledPaper elevation={1}>
       {/* Header */}
-      <Paper
-        elevation={2}
-        sx={{
-          p: 3,
-          mb: 4,
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
-          <LocalMoviesIcon sx={{ fontSize: 40 }} />
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>
-            Axels Cinema Booking
-          </Typography>
-        </Box>
-      </Paper>
+      <HeaderPaper elevation={2}>
+        <HeaderBox>
+          <LocalMoviesIcon />
+          <CinemaTitle variant="h4">Axels Cinema Booking</CinemaTitle>
+        </HeaderBox>
+      </HeaderPaper>
 
       {schedule.length > 0 ? (
         <>
@@ -105,9 +97,9 @@ function App() {
           />
         </>
       ) : (
-        <Box display="flex" justifyContent="center">
+        <LoadingBox>
           <CircularProgress />
-        </Box>
+        </LoadingBox>
       )}
       <BookingModal
         open={isModalOpen}
@@ -116,7 +108,7 @@ function App() {
         date={selectedDate}
         onBook={handleBook}
       />
-    </Paper>
+    </StyledPaper>
   );
 }
 

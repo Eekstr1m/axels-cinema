@@ -1,11 +1,24 @@
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
+// MUI Components
 import Grid from "@mui/material/Grid";
 import CardContent from "@mui/material/CardContent";
+
+// Styled Components
+import {
+  SeatsAvailabilityChip,
+  SeatsAvailabilityText,
+  SeatsBox,
+  SessionCard,
+  SessionListContainer,
+  SessionsHeading,
+  SessionTimeText,
+  TimeBox,
+} from "../styled/SessionList.styled";
+
+// MUI Icons
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
-import Chip from "@mui/material/Chip";
+
+// Other
 import type { Session } from "../types";
 
 export default function SessionList({
@@ -16,10 +29,8 @@ export default function SessionList({
   onSessionSelect: (session: Session) => void;
 }) {
   return (
-    <Box sx={{ mb: 4 }}>
-      <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>
-        Select a session time
-      </Typography>
+    <SessionListContainer>
+      <SessionsHeading variant="h4">Select a session time</SessionsHeading>
       <Grid container spacing={2}>
         {sessions.map((session) => {
           const availableSeats = session.seats
@@ -29,47 +40,23 @@ export default function SessionList({
 
           return (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={session.id}>
-              <Card
-                sx={{
-                  cursor: "pointer",
-                  transition: "all 0.3s",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: 4,
-                  },
-                }}
-                onClick={() => onSessionSelect(session)}
-              >
+              <SessionCard onClick={() => onSessionSelect(session)}>
                 <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 2,
-                      gap: 1,
-                    }}
-                  >
+                  <TimeBox>
                     <AccessTimeIcon color="primary" />
-                    <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                    <SessionTimeText variant="h5">
                       {session.time}
-                    </Typography>
-                  </Box>
+                    </SessionTimeText>
+                  </TimeBox>
 
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      mb: 1,
-                    }}
-                  >
+                  <SeatsBox>
                     <EventSeatIcon fontSize="small" />
-                    <Typography variant="body2" color="text.secondary">
+                    <SeatsAvailabilityText variant="body2">
                       Available seats: {availableSeats} з {totalSeats}
-                    </Typography>
-                  </Box>
+                    </SeatsAvailabilityText>
+                  </SeatsBox>
 
-                  <Chip
+                  <SeatsAvailabilityChip
                     label={
                       availableSeats > 0
                         ? "Seats available"
@@ -77,14 +64,13 @@ export default function SessionList({
                     }
                     size="small"
                     color={availableSeats > 0 ? "success" : "error"}
-                    sx={{ mt: 1 }}
                   />
                 </CardContent>
-              </Card>
+              </SessionCard>
             </Grid>
           );
         })}
       </Grid>
-    </Box>
+    </SessionListContainer>
   );
 }
