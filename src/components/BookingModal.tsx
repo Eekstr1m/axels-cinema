@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 // MUI Components
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
 // MUI Icons
@@ -52,6 +53,10 @@ export default function BookingModal({
   session: Session | null;
   onBook: (seats: { row: number; number: number }[]) => void;
 }) {
+  // Fullscreen dialog for small devices
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   const [selectedSeats, setSelectedSeats] = useState<
     { row: number; number: number }[]
   >([]);
@@ -98,7 +103,13 @@ export default function BookingModal({
   if (!session) return null;
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      fullScreen={fullScreen}
+    >
       <DialogTitle>
         <BookingHeading>Booking Tickets</BookingHeading>
       </DialogTitle>
@@ -106,24 +117,19 @@ export default function BookingModal({
       <DialogContent>
         {/* Information about the booking time */}
         <InfoBox>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <InfoItem>
-                <CalendarTodayIcon fontSize="small" color="primary" />
-                <Typography variant="body1">
-                  <strong>Date:</strong> {formatDate(date)}
-                </Typography>
-              </InfoItem>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <InfoItem>
-                <AccessTimeIcon fontSize="small" color="primary" />
-                <Typography variant="body1">
-                  <strong>Time:</strong> {session?.time}
-                </Typography>
-              </InfoItem>
-            </Grid>
-          </Grid>
+          <InfoItem>
+            <CalendarTodayIcon fontSize="small" color="primary" />
+            <Typography variant="body1">
+              <strong>Date:</strong> {formatDate(date)}
+            </Typography>
+          </InfoItem>
+
+          <InfoItem>
+            <AccessTimeIcon fontSize="small" color="primary" />
+            <Typography variant="body1">
+              <strong>Time:</strong> {session?.time}
+            </Typography>
+          </InfoItem>
         </InfoBox>
 
         {/* Screen */}

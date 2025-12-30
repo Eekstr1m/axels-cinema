@@ -19,3 +19,11 @@ export interface DaySchedule {
   date: string;
   sessions: Session[];
 }
+export interface PaymentFormData {
+  fullName: string;
+  email: string;
+  phone: string;
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+}

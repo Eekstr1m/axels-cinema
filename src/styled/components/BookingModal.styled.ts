@@ -14,6 +14,13 @@ export const InfoBox = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   padding: theme.spacing(2),
   borderRadius: theme.spacing(1),
+  display: "flex",
+  justifyContent: "space-evenly",
+  gap: theme.spacing(2),
+
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+  },
 }));
 
 export const InfoItem = styled(Box)(({ theme }) => ({
