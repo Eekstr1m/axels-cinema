@@ -1,7 +1,15 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-// MUI Icons
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import { processPayment, resetPaymentState } from "../redux/cinemaSlice";
+import type { RootState } from "../redux/store";
+
+// MUI
+import CircularProgress from "@mui/material/CircularProgress";
 import EmailIcon from "@mui/icons-material/Email";
 import PersonIcon from "@mui/icons-material/Person";
 
@@ -13,6 +21,7 @@ import {
   SectionHeading,
   StyledTextField,
   SubmitButton,
+  SuccessfulBox,
 } from "../styled/components/PaymentForm.styled";
 
 // Other
@@ -20,6 +29,18 @@ import type { PaymentFormData } from "../types";
 import { paymentValidationSchema } from "../utils/paymentValidationSchema";
 
 export default function PaymentForm() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isProcessingPayment, isError, isPaymentSuccessful } = useSelector(
+    (state: RootState) => state.cinema
+  );
+
+  useEffect(() => {
+    if (isPaymentSuccessful) {
+      dispatch(resetPaymentState());
+    }
+  }, [dispatch, isPaymentSuccessful]);
+
   const {
     register,
     handleSubmit,
@@ -30,8 +51,35 @@ export default function PaymentForm() {
   });
 
   const onSubmit = (data: PaymentFormData) => {
-    console.log("Payment data:", data);
+    dispatch(processPayment(data));
   };
+
+  if (isError) {
+    navigate("/error");
+  }
+
+  if (isPaymentSuccessful) {
+    return (
+      <SuccessfulBox>
+        <SectionHeading
+          variant="h5"
+          align="center"
+          color="primary"
+          textAlign={"center"}
+        >
+          Payment Successful!
+        </SectionHeading>
+        <SubmitButton
+          type="submit"
+          variant="contained"
+          size="small"
+          onClick={() => navigate("/")}
+        >
+          Back to main page
+        </SubmitButton>
+      </SuccessfulBox>
+    );
+  }
 
   return (
     <FormBox onSubmit={handleSubmit(onSubmit)}>
@@ -130,8 +178,18 @@ export default function PaymentForm() {
         </InfoInlineSection>
       </InfoGrid>
 
-      <SubmitButton type="submit" variant="contained" size="large" fullWidth>
-        Confirm Payment
+      <SubmitButton
+        type="submit"
+        variant="contained"
+        size="large"
+        fullWidth
+        disabled={isProcessingPayment}
+      >
+        {isProcessingPayment ? (
+          <CircularProgress color="inherit" />
+        ) : (
+          "Confirm Payment"
+        )}
       </SubmitButton>
     </FormBox>
   );

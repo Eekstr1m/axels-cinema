@@ -45,3 +45,11 @@ export const SubmitButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1.5),
   fontWeight: 600,
 }));
+
+export const SuccessfulBox = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: theme.spacing(2),
+  marginTop: theme.spacing(4),
+}));

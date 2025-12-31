@@ -26,6 +26,13 @@ export default defineConfig([
           patterns: [{ regex: "^@mui/[^/]+$" }],
         },
       ],
+       "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
     },
   },
 ]);

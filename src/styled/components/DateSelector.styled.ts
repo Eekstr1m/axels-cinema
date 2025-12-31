@@ -20,6 +20,7 @@ export const DatesGrid = styled(Grid)({
 export const DateChip = styled(Chip, {
   shouldForwardProp: (prop) => prop !== "isSelected",
 })<{ isSelected?: boolean }>(({ theme, isSelected }) => ({
+  minWidth: "120px",
   fontSize: "0.95rem",
   fontWeight: isSelected ? 600 : 400,
   cursor: "pointer",

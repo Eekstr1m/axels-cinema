@@ -4,6 +4,13 @@ import Typography from "@mui/material/Typography";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 
+export const LoadingBox = styled(Box)({
+  display: "flex",
+  justifyContent: "center",
+  height: "50vh",
+  alignItems: "center",
+});
+
 export const BookingHeading = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   fontWeight: 600,
@@ -36,6 +43,8 @@ export const ScreenBox = styled(Box)(({ theme }) => ({
   color: "white",
   textAlign: "center",
   borderRadius: "20px 20px 0 0",
+  userSelect: "none",
+  textTransform: "uppercase",
 }));
 
 export const SeatsContainer = styled(Box)(({ theme }) => ({
@@ -149,6 +158,10 @@ export const SelectedSeatsHeader = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1),
   marginBottom: theme.spacing(1),
 }));
+
+export const SelectedSeatsHeading = styled(Typography)({
+  fontWeight: 600,
+});
 
 export const SelectedSeatsChips = styled(Box)(({ theme }) => ({
   display: "flex",

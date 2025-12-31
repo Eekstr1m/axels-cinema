@@ -1,4 +1,15 @@
-import { useState } from "react";
+import { useEffect } from "react";
+
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import {
+  initializeSchedule,
+  selectDate,
+  selectSession,
+  clearSelectedSession,
+  loadSessionDetails,
+} from "../redux/cinemaSlice";
+import type { RootState } from "../redux/store";
 
 // Components
 import { DateSelector, SessionList, BookingModal } from "../components/.";
@@ -19,60 +30,72 @@ import {
 } from "../styled/pages/SessionsPage.styled";
 
 // Other
-import { generateAvailableDates } from "../utils/utils";
-import type { Session } from "../types";
+import type { SessionListItem } from "../types";
+import { useNavigate } from "react-router";
 
 export default function SessionsPage() {
-  const dates = generateAvailableDates();
-  const [schedule, setSchedule] = useState(dates);
-  const [selectedDate, setSelectedDate] = useState<string>(dates[0].date || "");
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const {
+    schedule,
+    selectedDate,
+    selectedSessionId,
+    sessionDetails,
+    isLoadingSchedule,
+    isError,
+  } = useSelector((state: RootState) => state.cinema);
+
+  const navigate = useNavigate();
+
+  // Initialize schedule on component mount (only if not already loaded)
+  useEffect(() => {
+    if (schedule.length === 0 && !isLoadingSchedule) {
+      dispatch(initializeSchedule());
+    }
+  }, [dispatch, schedule.length, isLoadingSchedule]);
+
+  // Update selected date when schedule loads
+  useEffect(() => {
+    if (schedule.length > 0 && !selectedDate) {
+      // Set default date to today if available, else first date in schedule
+      const today = new Date().toISOString().split("T")[0];
+      const isTodayAvailable = schedule.some((d) => d.date === today);
+
+      if (isTodayAvailable) {
+        dispatch(selectDate(today));
+      } else {
+        dispatch(selectDate(schedule[0].date));
+      }
+    }
+  }, [schedule, selectedDate, dispatch]);
 
   // Get sessions for selected date
-  const getCurrentSessions = (): Session[] => {
+  const getCurrentSessions = (): SessionListItem[] => {
     const daySchedule = schedule.find((d) => d.date === selectedDate);
     return daySchedule?.sessions || [];
   };
 
+  // Handle date selection
+  const handleDateSelect = (date: string) => {
+    dispatch(selectDate(date));
+  };
+
   // Handle session selection
-  const handleSessionSelect = (session: Session) => {
-    setSelectedSession(session);
-    setIsModalOpen(true);
+  const handleSessionSelect = (sessionId: string) => {
+    dispatch(selectSession(sessionId));
+    // Load session details only if not already loaded
+    if (!sessionDetails?.sessionId) {
+      dispatch(loadSessionDetails());
+    }
   };
 
-  // Handle booking
-  const handleBook = (seats: { row: number; number: number }[]) => {
-    if (!selectedSession) return;
-
-    // Update the schedule with booked seats
-    setSchedule((prevSchedule) =>
-      prevSchedule.map((daySchedule) => {
-        if (daySchedule.date !== selectedDate) return daySchedule;
-
-        // Update the selected session's seats
-        return {
-          ...daySchedule,
-          sessions: daySchedule.sessions.map((session) => {
-            if (session.id !== selectedSession.id) return session;
-
-            // Mark the selected seats as booked
-            return {
-              ...session,
-              seats: session.seats.map((row) =>
-                row.map((seat) => {
-                  const isBooked = seats.some(
-                    (s) => s.row === seat.row && s.number === seat.number
-                  );
-                  return isBooked ? { ...seat, isBooked: true } : seat;
-                })
-              ),
-            };
-          }),
-        };
-      })
-    );
+  // Handle modal close
+  const handleModalClose = () => {
+    dispatch(clearSelectedSession());
   };
+
+  if (isError) {
+    navigate("/error");
+  }
 
   return (
     <StyledPaper elevation={1}>
@@ -84,29 +107,28 @@ export default function SessionsPage() {
         </HeaderBox>
       </HeaderPaper>
 
-      {schedule.length > 0 ? (
+      {isLoadingSchedule ? (
+        <LoadingBox>
+          <CircularProgress />
+        </LoadingBox>
+      ) : (
         <>
           <DateSelector
             dates={schedule.map((d) => d.date)}
             selectedDate={selectedDate}
-            onDateSelect={setSelectedDate}
+            onDateSelect={handleDateSelect}
           />
           <SessionList
             sessions={getCurrentSessions()}
             onSessionSelect={handleSessionSelect}
           />
         </>
-      ) : (
-        <LoadingBox>
-          <CircularProgress />
-        </LoadingBox>
       )}
       <BookingModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        session={selectedSession}
+        open={!!selectedSessionId}
+        onClose={handleModalClose}
+        sessionDetails={sessionDetails}
         date={selectedDate}
-        onBook={handleBook}
       />
     </StyledPaper>
   );

@@ -1,6 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+
+// Redux
+import { useDispatch } from "react-redux";
+import { bookSeats } from "../redux/cinemaSlice";
+import type { AppDispatch } from "../redux/store";
 
 // MUI Components
 import DialogContent from "@mui/material/DialogContent";
@@ -8,6 +14,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // MUI Icons
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -34,29 +41,31 @@ import {
   SelectedSeatsInfo,
   CancelButton,
   BookButton,
+  LoadingBox,
+  SelectedSeatsHeading,
 } from "../styled/components/BookingModal.styled";
 
 // Other
 import { formatDate } from "../utils/utils";
-import type { Seat, Session } from "../types";
+import type { Seat, SessionDetails } from "../types";
 
 export default function BookingModal({
   open,
   onClose,
   date,
-  session,
-  onBook,
+  sessionDetails,
 }: {
   open: boolean;
   onClose: () => void;
   date: string;
-  session: Session | null;
-  onBook: (seats: { row: number; number: number }[]) => void;
+  sessionDetails: SessionDetails | null;
 }) {
   // Fullscreen dialog for small devices
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
+  const dispatch = useDispatch<AppDispatch>();
   const [selectedSeats, setSelectedSeats] = useState<
     { row: number; number: number }[]
   >([]);
@@ -92,15 +101,25 @@ export default function BookingModal({
   };
 
   const handleBook = () => {
-    if (selectedSeats.length > 0) {
-      console.log("selectedSeats", selectedSeats);
-      onBook(selectedSeats);
+    if (selectedSeats.length && sessionDetails) {
+      dispatch(bookSeats(selectedSeats));
       setSelectedSeats([]);
       onClose();
+      navigate("/payment");
     }
   };
 
-  if (!session) return null;
+  if (!sessionDetails || !sessionDetails.seats) {
+    return (
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogContent>
+          <LoadingBox>
+            <CircularProgress />
+          </LoadingBox>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog
@@ -127,19 +146,19 @@ export default function BookingModal({
           <InfoItem>
             <AccessTimeIcon fontSize="small" color="primary" />
             <Typography variant="body1">
-              <strong>Time:</strong> {session?.time}
+              <strong>Time:</strong> {sessionDetails.time}
             </Typography>
           </InfoItem>
         </InfoBox>
 
         {/* Screen */}
         <ScreenBox>
-          <Typography variant="body2">SCREEN</Typography>
+          <Typography variant="body2">screen</Typography>
         </ScreenBox>
 
         {/* Seats */}
         <SeatsContainer>
-          {session.seats.map((row, rowIndex) => (
+          {sessionDetails.seats.map((row, rowIndex) => (
             <SeatRow key={rowIndex}>
               <RowNumber>{rowIndex + 1}</RowNumber>
               {row.map((seat) => {
@@ -181,9 +200,9 @@ export default function BookingModal({
           <SelectedSeatsInfo>
             <SelectedSeatsHeader>
               <CheckCircleIcon color="success" />
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              <SelectedSeatsHeading variant="body1">
                 Selected seats: {selectedSeats.length}
-              </Typography>
+              </SelectedSeatsHeading>
             </SelectedSeatsHeader>
             <SelectedSeatsChips>
               {selectedSeats.map((seat) => (
