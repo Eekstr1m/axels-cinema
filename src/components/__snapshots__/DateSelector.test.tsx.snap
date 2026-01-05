@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`DateSelector DateSelector matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-r32ezy"
+  >
+    <h4
+      class="MuiTypography-root MuiTypography-h4 css-1b3xv62-MuiTypography-root"
+    >
+      Select a date
+    </h4>
+    <div
+      class="MuiGrid-root MuiGrid-container MuiGrid-direction-xs-row MuiGrid-spacing-xs-2 css-vs0dty-MuiGrid-root"
+    >
+      <div
+        class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorPrimary MuiChip-clickable MuiChip-clickableColorPrimary MuiChip-filledPrimary css-ef1zlr-MuiButtonBase-root-MuiChip-root"
+        role="button"
+        tabindex="0"
+      >
+        <span
+          class="MuiChip-label MuiChip-labelMedium css-1dybbl5-MuiChip-label"
+        >
+          Thu, Dec 25
+        </span>
+      </div>
+      <div
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-1hk5s8o-MuiButtonBase-root-MuiChip-root"
+        role="button"
+        tabindex="0"
+      >
+        <span
+          class="MuiChip-label MuiChip-labelMedium css-16cgrcw-MuiChip-label"
+        >
+          Fri, Dec 26
+        </span>
+      </div>
+      <div
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-1hk5s8o-MuiButtonBase-root-MuiChip-root"
+        role="button"
+        tabindex="0"
+      >
+        <span
+          class="MuiChip-label MuiChip-labelMedium css-16cgrcw-MuiChip-label"
+        >
+          Sat, Dec 27
+        </span>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
