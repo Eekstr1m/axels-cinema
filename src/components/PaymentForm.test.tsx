@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
-import { BrowserRouter } from "react-router";
 import { configureStore } from "@reduxjs/toolkit";
+import { BrowserRouter } from "react-router";
 import cinemaReducer from "../redux/cinemaSlice";
 import PaymentForm from "./PaymentForm";
-import userEvent from "@testing-library/user-event";
 
 const mockStore = configureStore({
   reducer: {
@@ -200,6 +200,20 @@ describe(PaymentForm, () => {
 
     dispatchSpy.mockRestore();
   });
+
+  test('PaymentForm shows success message after successful payment', async () => {
+    const successStore = configureStore({
+        reducer: {
+            cinema: (state = { isPaymentSuccessful: true }) => state
+        }
+    })
+
+    render(<Provider store={successStore}>
+        <BrowserRouter>
+          <PaymentForm />
+        </BrowserRouter>
+    </Provider>)
+  })
 
   test("PaymentForm matches snapshot", () => {
     const { asFragment } = render(

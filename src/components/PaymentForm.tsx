@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useForm, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -35,12 +34,6 @@ export default function PaymentForm() {
     (state: RootState) => state.cinema
   );
 
-  useEffect(() => {
-    if (isPaymentSuccessful) {
-      dispatch(resetPaymentState());
-    }
-  }, [dispatch, isPaymentSuccessful]);
-
   const {
     register,
     handleSubmit,
@@ -73,7 +66,10 @@ export default function PaymentForm() {
           type="submit"
           variant="contained"
           size="small"
-          onClick={() => navigate("/")}
+          onClick={() => {
+            navigate("/");
+            dispatch(resetPaymentState());
+          }}
         >
           Back to main page
         </SubmitButton>
