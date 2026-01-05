@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 // Redux
@@ -46,7 +46,7 @@ export default function PaymentForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<PaymentFormData>({
-    resolver: yupResolver(paymentValidationSchema),
+    resolver: yupResolver(paymentValidationSchema) as Resolver<PaymentFormData>,
     mode: "onBlur",
   });
 
