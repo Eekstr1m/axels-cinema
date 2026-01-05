@@ -27,18 +27,16 @@ export default function SessionList({
     <SessionListContainer>
       <SessionsHeading variant="h4">Select a session time</SessionsHeading>
       <Grid container spacing={2}>
-        {sessions.map((session) => {
-          return (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={session.id}>
-              <SessionCard onClick={() => onSessionSelect(session.id)}>
-                <TimeBox>
-                  <AccessTimeIcon color="primary" />
-                  <SessionTimeText variant="h5">{session.time}</SessionTimeText>
-                </TimeBox>
-              </SessionCard>
-            </Grid>
-          );
-        })}
+        {sessions.map((session) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={session.id}>
+            <SessionCard onClick={() => onSessionSelect(session.id)}>
+              <TimeBox>
+                <AccessTimeIcon color="primary" />
+                <SessionTimeText variant="h5">{session.time}</SessionTimeText>
+              </TimeBox>
+            </SessionCard>
+          </Grid>
+        ))}
       </Grid>
     </SessionListContainer>
   );

@@ -89,11 +89,8 @@ export default function BookingModal({
     }
   };
 
-  const isSeatSelected = (seat: Seat): boolean => {
-    return selectedSeats.some(
-      (s) => s.row === seat.row && s.number === seat.number
-    );
-  };
+  const isSeatSelected = (seat: Seat): boolean =>
+    selectedSeats.some((s) => s.row === seat.row && s.number === seat.number);
 
   const handleClose = () => {
     setSelectedSeats([]);
