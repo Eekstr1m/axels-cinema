@@ -4,7 +4,7 @@ import {
   DateSelectorContainer,
   DatesGrid,
   DatesHeading,
-} from "../styled/DateSelector.styled";
+} from "../styled/components/DateSelector.styled";
 
 // Other
 import { formatDate } from "../utils/utils";

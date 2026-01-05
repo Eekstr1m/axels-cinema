@@ -1,11 +1,16 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./components/App.tsx";
+import { Provider } from "react-redux";
+
 import { IndexGlobalStyles } from "./styled/GlobalStyles.tsx";
+import { Router } from "./pages/router.tsx";
+import { store } from "./redux/store.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <IndexGlobalStyles />
-    <App />
+    <Provider store={store}>
+      <IndexGlobalStyles />
+      <Router />
+    </Provider>
   </StrictMode>
 );
