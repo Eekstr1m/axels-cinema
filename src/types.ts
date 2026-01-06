@@ -1,5 +1,8 @@
 // Types for the cinema booking application
 
+import type { InferType } from "yup";
+import type { paymentValidationSchema } from "./utils/paymentValidationSchema";
+
 // Seat represents a single seat in the cinema
 export interface Seat {
   row: number;
@@ -50,14 +53,7 @@ export interface BookedTicket extends Booking {
 }
 
 // Payment Form Data
-export interface PaymentFormData {
-  fullName: string;
-  email: string;
-  phone: string;
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-}
+export type PaymentFormData = InferType<typeof paymentValidationSchema>;
 
 // All Payment Info
 export interface AllPaymentInfo extends PaymentFormData {

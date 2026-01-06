@@ -81,7 +81,7 @@ const cinemaSlice = createSlice({
       const { seats } = action.payload;
 
       // Update session details with booked seats
-      if (state.sessionDetails) {
+      if (Object.keys(state.sessionDetails).length) {
         const sessionDetail = state.sessionDetails;
         sessionDetail.seats = sessionDetail.seats.map((row) =>
           row.map((seat) => {
@@ -127,6 +127,9 @@ const cinemaSlice = createSlice({
     setErrorState: (state, action: PayloadAction<string>) => {
       state.isError = true;
       state.errorMessage = action.payload;
+      state.isLoadingSchedule = false;
+      state.isLoadingSession = false;
+      state.isProcessingPayment = false;
     },
   },
 });

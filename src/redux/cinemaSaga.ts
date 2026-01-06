@@ -32,7 +32,7 @@ import type {
 } from "../types";
 
 // cinema/initializeSchedule saga
-function* initializeScheduleSaga() {
+export function* initializeScheduleSaga() {
   try {
     // Load sessions list (without seat details)
     const response: SessionsListResponse = yield call(fetchSessionsList);
@@ -48,7 +48,7 @@ function* initializeScheduleSaga() {
 }
 
 // cinema/setSessionDetails saga
-function* loadSessionDetailsSaga() {
+export function* loadSessionDetailsSaga() {
   try {
     // Load detailed session info with seats from mockable.io URL
     const response: SessionDetails = yield call(fetchSessionDetails);
@@ -62,7 +62,7 @@ function* loadSessionDetailsSaga() {
 }
 
 // cinema/bookSeats saga
-function* bookSeatsSaga(
+export function* bookSeatsSaga(
   action: PayloadAction<{ row: number; number: number }[]>
 ) {
   try {
@@ -79,7 +79,6 @@ function* bookSeatsSaga(
         seats: action.payload,
       })
     );
-
   } catch (error) {
     console.error("Error booking seats:", error);
     yield put(setErrorState("Error booking seats"));
@@ -87,7 +86,7 @@ function* bookSeatsSaga(
 }
 
 // cinema/processPayment saga
-function* processPaymentSaga(action: PayloadAction<PaymentFormData>) {
+export function* processPaymentSaga(action: PayloadAction<PaymentFormData>) {
   try {
     const state: RootState = yield select();
     const { bookedTicket } = state.cinema;
@@ -102,7 +101,10 @@ function* processPaymentSaga(action: PayloadAction<PaymentFormData>) {
     };
 
     // Here you can make a call to the real payment API
-    const response: { success: boolean } = yield call(postPayment, allPaymentInfo);
+    const response: { success: boolean } = yield call(
+      postPayment,
+      allPaymentInfo
+    );
 
     yield put(processPaymentSuccess());
     console.log("✅ Payment processed successfully", response.success);

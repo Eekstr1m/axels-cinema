@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`SessionList SessionList matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-r32ezy"
+  >
+    <h4
+      class="MuiTypography-root MuiTypography-h4 css-1b3xv62-MuiTypography-root"
+    >
+      Select a session time
+    </h4>
+    <div
+      class="MuiGrid-root MuiGrid-container MuiGrid-direction-xs-row MuiGrid-spacing-xs-2 css-zjhuaj-MuiGrid-root"
+    >
+      <div
+        class="MuiGrid-root MuiGrid-direction-xs-row MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 MuiGrid-grid-md-4 css-h3cks1-MuiGrid-root"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-vwkpac-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+        >
+          <div
+            class="MuiBox-root css-v8fmzi"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium css-1wtp6o0-MuiSvgIcon-root"
+              data-testid="AccessTimeIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8"
+              />
+              <path
+                d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+              />
+            </svg>
+            <h5
+              class="MuiTypography-root MuiTypography-h5 css-16f4sel-MuiTypography-root"
+            >
+              10:00
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiGrid-root MuiGrid-direction-xs-row MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 MuiGrid-grid-md-4 css-h3cks1-MuiGrid-root"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-vwkpac-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+        >
+          <div
+            class="MuiBox-root css-v8fmzi"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium css-1wtp6o0-MuiSvgIcon-root"
+              data-testid="AccessTimeIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8"
+              />
+              <path
+                d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+              />
+            </svg>
+            <h5
+              class="MuiTypography-root MuiTypography-h5 css-16f4sel-MuiTypography-root"
+            >
+              12:00
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiGrid-root MuiGrid-direction-xs-row MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 MuiGrid-grid-md-4 css-h3cks1-MuiGrid-root"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-vwkpac-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+        >
+          <div
+            class="MuiBox-root css-v8fmzi"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium css-1wtp6o0-MuiSvgIcon-root"
+              data-testid="AccessTimeIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8"
+              />
+              <path
+                d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+              />
+            </svg>
+            <h5
+              class="MuiTypography-root MuiTypography-h5 css-16f4sel-MuiTypography-root"
+            >
+              14:00
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
