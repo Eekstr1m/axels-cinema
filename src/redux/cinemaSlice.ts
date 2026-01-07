@@ -9,12 +9,12 @@ import type {
 
 interface CinemaState {
   schedule: DaySchedule[];
-  sessionDetails: SessionDetails;
+  sessionDetails: SessionDetails | null;
   selectedDate: string;
   selectedSessionId: string | null;
   isLoadingSchedule: boolean;
   isLoadingSession: boolean;
-  bookedTicket: BookedTicket;
+  bookedTicket: BookedTicket | null;
   isProcessingPayment: boolean;
   isPaymentSuccessful?: boolean;
   isError: boolean;
@@ -23,12 +23,12 @@ interface CinemaState {
 
 const initialState: CinemaState = {
   schedule: [],
-  sessionDetails: {} as SessionDetails,
+  sessionDetails: null,
   selectedDate: "",
   selectedSessionId: null,
   isLoadingSchedule: false,
   isLoadingSession: false,
-  bookedTicket: {} as BookedTicket,
+  bookedTicket: null,
   isProcessingPayment: false,
   isError: false,
 };
@@ -81,7 +81,7 @@ const cinemaSlice = createSlice({
       const { seats } = action.payload;
 
       // Update session details with booked seats
-      if (Object.keys(state.sessionDetails).length) {
+      if (state.sessionDetails && state.sessionDetails.seats) {
         const sessionDetail = state.sessionDetails;
         sessionDetail.seats = sessionDetail.seats.map((row) =>
           row.map((seat) => {

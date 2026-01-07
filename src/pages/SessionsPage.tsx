@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 // Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
   initializeSchedule,
   selectDate,
@@ -42,22 +42,17 @@ export default function SessionsPage() {
     sessionDetails,
     isLoadingSchedule,
     isError,
-  } = useSelector((state: RootState) => state.cinema);
+  } = useSelector((state: RootState) => state.cinema, shallowEqual);
 
   const navigate = useNavigate();
 
-  // Initialize schedule on component mount (only if not already loaded)
+  // Initialize schedule and set default date
   useEffect(() => {
     if (schedule.length === 0 && !isLoadingSchedule) {
       dispatch(initializeSchedule());
-    }
-  }, [dispatch, schedule.length, isLoadingSchedule]);
-
-  // Update selected date when schedule loads
-  useEffect(() => {
-    if (schedule.length > 0 && !selectedDate) {
+    } else if (schedule.length > 0 && !selectedDate) {
       // Set default date to today if available, else first date in schedule
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toLocaleDateString("en-CA");
       const isTodayAvailable = schedule.some((d) => d.date === today);
 
       if (isTodayAvailable) {
@@ -66,13 +61,13 @@ export default function SessionsPage() {
         dispatch(selectDate(schedule[0].date));
       }
     }
-  }, [schedule, selectedDate, dispatch]);
+  }, [dispatch, schedule, selectedDate, isLoadingSchedule]);
 
-  // Get sessions for selected date
-  const getCurrentSessions = (): SessionListItem[] => {
+  // Get sessions for selected date (memoized for performance)
+  const currentSessions = useMemo((): SessionListItem[] => {
     const daySchedule = schedule.find((d) => d.date === selectedDate);
     return daySchedule?.sessions || [];
-  };
+  }, [schedule, selectedDate]);
 
   // Handle date selection
   const handleDateSelect = (date: string) => {
@@ -119,7 +114,7 @@ export default function SessionsPage() {
             onDateSelect={handleDateSelect}
           />
           <SessionList
-            sessions={getCurrentSessions()}
+            sessions={currentSessions}
             onSessionSelect={handleSessionSelect}
           />
         </>

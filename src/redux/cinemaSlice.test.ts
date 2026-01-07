@@ -47,12 +47,12 @@ const mockSessionDetails: SessionDetails = {
 describe("cinemaSlice", () => {
   const initialState = {
     schedule: [],
-    sessionDetails: {} as SessionDetails,
+    sessionDetails: null,
     selectedDate: "",
     selectedSessionId: null,
     isLoadingSchedule: false,
     isLoadingSession: false,
-    bookedTicket: {} as BookedTicket,
+    bookedTicket: null,
     isProcessingPayment: false,
     isError: false,
   };
@@ -144,11 +144,12 @@ describe("cinemaSlice", () => {
     };
     const state = cinemaReducer(previousState, bookSeatsSuccess(mockBooking));
 
-    expect(state.sessionDetails.seats[0][1].isBooked).toBe(true); // row 1, number 2
-    expect(state.sessionDetails.seats[1][2].isBooked).toBe(true); // row 2, number 3
+    expect(state.sessionDetails).not.toBeNull();
+    expect(state.sessionDetails?.seats[0][1].isBooked).toBe(true); // row 1, number 2
+    expect(state.sessionDetails?.seats[1][2].isBooked).toBe(true); // row 2, number 3
 
-    expect(state.sessionDetails.bookedSeats).toBe(4);
-    expect(state.sessionDetails.availableSeats).toBe(4);
+    expect(state.sessionDetails?.bookedSeats).toBe(4);
+    expect(state.sessionDetails?.availableSeats).toBe(4);
 
     expect(state.bookedTicket).toEqual({
       sessionId: "session-1",
@@ -166,7 +167,7 @@ describe("cinemaSlice", () => {
   test("bookSeatsSuccess does not update seats if sessionDetails is null", () => {
     const previousState = {
       ...initialState,
-      sessionDetails: {} as SessionDetails,
+      sessionDetails: null,
       selectedSessionId: "session-1",
     };
     const mockBooking: Booking = {
@@ -179,8 +180,8 @@ describe("cinemaSlice", () => {
     };
     const state = cinemaReducer(previousState, bookSeatsSuccess(mockBooking));
 
-    expect(state.sessionDetails).toEqual({} as SessionDetails);
-    expect(state.bookedTicket).toEqual({} as BookedTicket);
+    expect(state.sessionDetails).toBeNull();
+    expect(state.bookedTicket).toBeNull();
     expect(state.selectedSessionId).toBeNull();
   });
 

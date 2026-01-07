@@ -1,69 +1,3 @@
-import type { Session, Seat, DaySchedule } from "../types";
-
-// Generate session times for a day
-export const generateSessionsTimes = (): string[] => {
-  const times = [];
-  const startedTime = 10;
-  const endedTime = 20;
-  const hourInterval = 2;
-
-  for (let hour = startedTime; hour <= endedTime; hour += hourInterval) {
-    times.push(`${hour}:00`);
-  }
-  return times;
-};
-
-// Generate available dates for the next 7 days
-export const generateAvailableDates = (): DaySchedule[] => {
-  const dates: DaySchedule[] = [];
-  const today = new Date();
-  const daysToShow = 7;
-
-  for (let i = 0; i < daysToShow; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const dateString = date.toISOString().split("T")[0];
-
-    dates.push({
-      date: dateString,
-      sessions: generateSessions(dateString),
-    });
-  }
-
-  return dates;
-};
-
-// Initialize seats for a session
-export const initializeSeats = (): Seat[][] => {
-  const rows = 8;
-  const seatsPerRow = 10;
-  const seats = [];
-
-  for (let row = 1; row <= rows; row++) {
-    const rowSeats: Seat[] = [];
-    for (let seat = 1; seat <= seatsPerRow; seat++) {
-      rowSeats.push({
-        row,
-        number: seat,
-        isBooked: false,
-      });
-    }
-    seats.push(rowSeats);
-  }
-
-  return seats;
-};
-
-// Generate sessions for a specific date
-export const generateSessions = (date: string): Session[] => {
-  const times = generateSessionsTimes();
-  return times.map((time) => ({
-    id: `${date}-${time}`,
-    time,
-    seats: initializeSeats(),
-  }));
-};
-
 // Format date for display
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -73,4 +7,35 @@ export const formatDate = (dateString: string): string => {
     month: "short",
   };
   return date.toLocaleDateString("en-EN", options);
+};
+
+// Format card number
+export const formatCardNumber = (e: React.FormEvent<HTMLInputElement>) => {
+  const target = e.target as HTMLInputElement;
+  // Remove all non-numeric characters
+  let value = target.value.replace(/[^0-9]/g, "");
+  // Limit to 16 digits
+  value = value.slice(0, 16);
+  // Add space after every 4 digits
+  value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
+  target.value = value;
+};
+
+// Format expiry date as "MM/YY"
+export const formatExpiryDate = (e: React.FormEvent<HTMLInputElement>) => {
+  const target = e.target as HTMLInputElement;
+
+  let value = target.value.replace(/\D/g, "").slice(0, 4);
+  if (value.length > 2) {
+    value = value.slice(0, 2) + "/" + value.slice(2);
+  }
+  target.value = value;
+};
+
+// Format CVV
+export const formatCVV = (e: React.FormEvent<HTMLInputElement>) => {
+  const target = e.target as HTMLInputElement;
+  // Limit to max 4 digits and only numeric
+  const value = target.value.replace(/\D/g, "").slice(0, 4);
+  target.value = value;
 };

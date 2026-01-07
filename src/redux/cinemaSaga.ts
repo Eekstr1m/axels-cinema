@@ -92,6 +92,10 @@ export function* processPaymentSaga(action: PayloadAction<PaymentFormData>) {
     const { bookedTicket } = state.cinema;
     const paymentData: PaymentFormData = action.payload;
 
+    if (!bookedTicket) {
+      throw new Error("No booked ticket found for payment processing");
+    }
+
     // Simulate payment processing delay
     yield call(() => new Promise((res) => setTimeout(res, 1500)));
 

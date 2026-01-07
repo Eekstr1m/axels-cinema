@@ -26,6 +26,7 @@ import {
 // Other
 import type { PaymentFormData } from "../types";
 import { paymentValidationSchema } from "../utils/paymentValidationSchema";
+import { formatCardNumber, formatCVV, formatExpiryDate } from "../utils/utils";
 
 export default function PaymentForm() {
   const navigate = useNavigate();
@@ -46,6 +47,27 @@ export default function PaymentForm() {
   const onSubmit = (data: PaymentFormData) => {
     dispatch(processPayment(data));
   };
+
+  const renderTextField = (
+    name: keyof PaymentFormData,
+    label: string,
+    options?: {
+      type?: string;
+      placeholder?: string;
+      onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
+    }
+  ) => (
+    <StyledTextField
+      fullWidth
+      label={label}
+      type={options?.type}
+      placeholder={options?.placeholder}
+      {...register(name)}
+      onInput={options?.onInput}
+      error={!!errors[name]}
+      helperText={errors[name]?.message}
+    />
+  );
 
   if (isError) {
     navigate("/error");
@@ -86,29 +108,10 @@ export default function PaymentForm() {
       </SectionHeading>
 
       <InfoGrid>
-        <StyledTextField
-          fullWidth
-          label="Full Name"
-          {...register("fullName")}
-          error={!!errors.fullName}
-          helperText={errors.fullName?.message}
-        />
+        {renderTextField("fullName", "Full Name")}
         <InfoInlineSection>
-          <StyledTextField
-            fullWidth
-            label="Email"
-            type="email"
-            {...register("email")}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-          />
-          <StyledTextField
-            fullWidth
-            label="Phone Number"
-            {...register("phone")}
-            error={!!errors.phone}
-            helperText={errors.phone?.message}
-          />
+          {renderTextField("email", "Email", { type: "email" })}
+          {renderTextField("phone", "Phone Number")}
         </InfoInlineSection>
       </InfoGrid>
 
@@ -119,58 +122,20 @@ export default function PaymentForm() {
       </SectionHeading>
 
       <InfoGrid>
-        <StyledTextField
-          fullWidth
-          label="Card Number"
-          placeholder="1234 5678 9012 3456"
-          {...register("cardNumber")}
-          onInput={(e) => {
-            const target = e.target as HTMLInputElement;
-            // Remove all non-numeric characters
-            let value = target.value.replace(/[^0-9]/g, "");
-            // Limit to 16 digits
-            value = value.slice(0, 16);
-            // Add space after every 4 digits
-            value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
-            target.value = value;
-          }}
-          error={!!errors.cardNumber}
-          helperText={errors.cardNumber?.message}
-        />
+        {renderTextField("cardNumber", "Card Number", {
+          placeholder: "1234 5678 9012 3456",
+          onInput: formatCardNumber,
+        })}
 
         <InfoInlineSection>
-          <StyledTextField
-            fullWidth
-            label="Expiry Date"
-            placeholder="MM/YY"
-            {...register("expiryDate")}
-            onInput={(e) => {
-              const target = e.target as HTMLInputElement;
-
-              // Format input as MM/YY
-              let value = target.value.replace(/\D/g, "").slice(0, 4);
-              if (value.length > 2) {
-                value = value.slice(0, 2) + "/" + value.slice(2);
-              }
-              target.value = value;
-            }}
-            error={!!errors.expiryDate}
-            helperText={errors.expiryDate?.message}
-          />
-          <StyledTextField
-            fullWidth
-            label="CVV"
-            placeholder="123"
-            {...register("cvv")}
-            onInput={(e) => {
-              const target = e.target as HTMLInputElement;
-              // Limit to max 4 digits and only numeric
-              const value = target.value.replace(/\D/g, "").slice(0, 4);
-              target.value = value;
-            }}
-            error={!!errors.cvv}
-            helperText={errors.cvv?.message}
-          />
+          {renderTextField("expiryDate", "Expiry Date", {
+            placeholder: "MM/YY",
+            onInput: formatExpiryDate,
+          })}
+          {renderTextField("cvv", "CVV", {
+            placeholder: "123",
+            onInput: formatCVV,
+          })}
         </InfoInlineSection>
       </InfoGrid>
 

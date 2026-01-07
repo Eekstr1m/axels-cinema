@@ -18,7 +18,7 @@ import type { RootState } from "../redux/store";
 export default function PaymentPage() {
   const { bookedTicket } = useSelector((state: RootState) => state.cinema);
 
-  if (Object.keys(bookedTicket).length === 0) {
+  if (!bookedTicket || bookedTicket.seats.length === 0) {
     return (
       <PaymentContainer>
         <PaymentPaper>
