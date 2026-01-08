@@ -2,10 +2,8 @@ import { useNavigate } from "react-router";
 import { useForm, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-// Redux
-import { useDispatch, useSelector } from "react-redux";
-import { processPayment, resetPaymentState } from "../redux/cinemaSlice";
-import type { RootState } from "../redux/store";
+// Custom Hooks
+import { usePayment } from "../hooks";
 
 // MUI
 import CircularProgress from "@mui/material/CircularProgress";
@@ -30,10 +28,14 @@ import { formatCardNumber, formatCVV, formatExpiryDate } from "../utils/utils";
 
 export default function PaymentForm() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { isProcessingPayment, isError, isPaymentSuccessful } = useSelector(
-    (state: RootState) => state.cinema
-  );
+
+  const {
+    isProcessing,
+    isSuccessful,
+    error,
+    handleProcessPayment,
+    handleResetPayment,
+  } = usePayment();
 
   const {
     register,
@@ -45,7 +47,7 @@ export default function PaymentForm() {
   });
 
   const onSubmit = (data: PaymentFormData) => {
-    dispatch(processPayment(data));
+    handleProcessPayment(data);
   };
 
   const renderTextField = (
@@ -69,11 +71,11 @@ export default function PaymentForm() {
     />
   );
 
-  if (isError) {
+  if (error) {
     navigate("/error");
   }
 
-  if (isPaymentSuccessful) {
+  if (isSuccessful) {
     return (
       <SuccessfulBox>
         <SectionHeading
@@ -90,7 +92,7 @@ export default function PaymentForm() {
           size="small"
           onClick={() => {
             navigate("/");
-            dispatch(resetPaymentState());
+            handleResetPayment();
           }}
         >
           Back to main page
@@ -124,17 +126,26 @@ export default function PaymentForm() {
       <InfoGrid>
         {renderTextField("cardNumber", "Card Number", {
           placeholder: "1234 5678 9012 3456",
-          onInput: formatCardNumber,
+          onInput: (e) => {
+            const target = e.target as HTMLInputElement;
+            target.value = formatCardNumber(target.value);
+          },
         })}
 
         <InfoInlineSection>
           {renderTextField("expiryDate", "Expiry Date", {
             placeholder: "MM/YY",
-            onInput: formatExpiryDate,
+            onInput: (e) => {
+              const target = e.target as HTMLInputElement;
+              target.value = formatExpiryDate(target.value);
+            },
           })}
           {renderTextField("cvv", "CVV", {
             placeholder: "123",
-            onInput: formatCVV,
+            onInput: (e) => {
+              const target = e.target as HTMLInputElement;
+              target.value = formatCVV(target.value);
+            },
           })}
         </InfoInlineSection>
       </InfoGrid>
@@ -144,9 +155,9 @@ export default function PaymentForm() {
         variant="contained"
         size="large"
         fullWidth
-        disabled={isProcessingPayment}
+        disabled={isProcessing}
       >
-        {isProcessingPayment ? (
+        {isProcessing ? (
           <CircularProgress color="inherit" />
         ) : (
           "Confirm Payment"

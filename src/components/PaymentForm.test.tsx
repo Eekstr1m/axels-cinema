@@ -3,12 +3,16 @@ import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { BrowserRouter } from "react-router";
-import cinemaReducer from "../redux/cinemaSlice";
+import scheduleReducer from "../redux/slices/scheduleSlice";
+import bookingReducer from "../redux/slices/bookingSlice";
+import paymentReducer from "../redux/slices/paymentSlice";
 import PaymentForm from "./PaymentForm";
 
 const mockStore = configureStore({
   reducer: {
-    cinema: cinemaReducer,
+    schedule: scheduleReducer,
+    booking: bookingReducer,
+    payment: paymentReducer,
   },
 });
 
@@ -146,7 +150,9 @@ describe(PaymentForm, () => {
   test("PaymentForm submits form with valid data and dispatches processPayment action", async () => {
     const store = configureStore({
       reducer: {
-        cinema: cinemaReducer,
+        schedule: scheduleReducer,
+        booking: bookingReducer,
+        payment: paymentReducer,
       },
     });
 
@@ -184,7 +190,7 @@ describe(PaymentForm, () => {
     // Verify that dispatch was called with processPayment action
     expect(dispatchSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: "cinema/processPayment",
+        type: "payment/processPayment",
         payload: expect.objectContaining({
           fullName: "John Doe",
           email: "john.doe@example.com",
@@ -201,19 +207,27 @@ describe(PaymentForm, () => {
     dispatchSpy.mockRestore();
   });
 
-  test('PaymentForm shows success message after successful payment', async () => {
+  test("PaymentForm shows success message after successful payment", async () => {
     const successStore = configureStore({
-        reducer: {
-            cinema: (state = { isPaymentSuccessful: true }) => state
-        }
-    })
+      reducer: {
+        schedule: scheduleReducer,
+        booking: bookingReducer,
+        payment: () => ({
+          isProcessing: false,
+          isSuccessful: true,
+          error: null,
+        }),
+      },
+    });
 
-    render(<Provider store={successStore}>
+    render(
+      <Provider store={successStore}>
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-    </Provider>)
-  })
+      </Provider>
+    );
+  });
 
   test("PaymentForm matches snapshot", () => {
     const { asFragment } = render(

@@ -5,7 +5,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { bookSeats } from "../redux/cinemaSlice";
+import { bookSeats } from "../redux/slices/bookingSlice";
 import type { AppDispatch } from "../redux/store";
 
 // MUI Components

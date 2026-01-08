@@ -1,24 +1,23 @@
 // Components
-import { useSelector } from "react-redux";
 import { PaymentForm } from "../components";
 
 // Styled Components
+import { useBooking } from "../hooks";
 import {
   PaymentContainer,
-  PaymentPaper,
   PaymentHeading,
+  PaymentPaper,
   SummaryBox,
+  SummaryHeading,
   SummaryItem,
   SummaryLabel,
   SummaryValue,
-  SummaryHeading,
 } from "../styled/pages/PaymentPage.styled";
-import type { RootState } from "../redux/store";
 
 export default function PaymentPage() {
-  const { bookedTicket } = useSelector((state: RootState) => state.cinema);
+  const { bookedTicket, hasBooking } = useBooking();
 
-  if (!bookedTicket || bookedTicket.seats.length === 0) {
+  if (!hasBooking || !bookedTicket) {
     return (
       <PaymentContainer>
         <PaymentPaper>

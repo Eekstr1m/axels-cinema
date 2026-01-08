@@ -3,13 +3,17 @@ import userEvent from "@testing-library/user-event";
 import { BrowserRouter } from "react-router";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import cinemaReducer from "../redux/cinemaSlice";
+import scheduleReducer from "../redux/slices/scheduleSlice";
+import bookingReducer from "../redux/slices/bookingSlice";
+import paymentReducer from "../redux/slices/paymentSlice";
 import { BookingModal } from ".";
 import type { SessionDetails } from "../types";
 
 const mockStore = configureStore({
   reducer: {
-    cinema: cinemaReducer,
+    schedule: scheduleReducer,
+    booking: bookingReducer,
+    payment: paymentReducer,
   },
 });
 
@@ -243,12 +247,19 @@ describe(BookingModal, () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  test('BookingModal matches snapshot', () => {
-    const { asFragment } = render(<Provider store={mockStore}>
+  test("BookingModal matches snapshot", () => {
+    const { asFragment } = render(
+      <Provider store={mockStore}>
         <BrowserRouter>
-        <BookingModal open={true} onClose={onClose} date='2026-01-10' sessionDetails={mockSessionDetails} />
+          <BookingModal
+            open={true}
+            onClose={onClose}
+            date="2026-01-10"
+            sessionDetails={mockSessionDetails}
+          />
         </BrowserRouter>
-    </Provider>)
+      </Provider>
+    );
 
     expect(asFragment()).toMatchSnapshot();
   });

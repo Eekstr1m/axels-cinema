@@ -1,18 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
-// Redux
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import {
-  initializeSchedule,
-  selectDate,
-  selectSession,
-  clearSelectedSession,
-  loadSessionDetails,
-} from "../redux/cinemaSlice";
-import type { RootState } from "../redux/store";
+// Custom Hooks
+import { useBooking, useSchedule } from "../hooks/.";
 
 // Components
-import { DateSelector, SessionList, BookingModal } from "../components/.";
+import { BookingModal, DateSelector, SessionList } from "../components/.";
 
 // MUI Components
 import CircularProgress from "@mui/material/CircularProgress";
@@ -29,66 +22,55 @@ import {
   StyledPaper,
 } from "../styled/pages/SessionsPage.styled";
 
-// Other
-import type { SessionListItem } from "../types";
-import { useNavigate } from "react-router";
-
 export default function SessionsPage() {
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Use custom hooks for state management
   const {
     schedule,
     selectedDate,
-    selectedSessionId,
+    isLoading: isLoadingSchedule,
+    currentSessions,
+    availableDates,
+    loadScheduleData,
+    handleSelectDate,
+  } = useSchedule();
+
+  const {
     sessionDetails,
-    isLoadingSchedule,
-    isError,
-  } = useSelector((state: RootState) => state.cinema, shallowEqual);
+    isSessionSelected,
+    error: bookingError,
+    loadSession,
+    handleSelectSession,
+    handleClearSession,
+  } = useBooking();
 
-  const navigate = useNavigate();
-
-  // Initialize schedule and set default date
+  // Initialize schedule on mount
   useEffect(() => {
     if (schedule.length === 0 && !isLoadingSchedule) {
-      dispatch(initializeSchedule());
+      loadScheduleData();
     } else if (schedule.length > 0 && !selectedDate) {
-      // Set default date to today if available, else first date in schedule
+      // Set default date
       const today = new Date().toLocaleDateString("en-CA");
       const isTodayAvailable = schedule.some((d) => d.date === today);
-
-      if (isTodayAvailable) {
-        dispatch(selectDate(today));
-      } else {
-        dispatch(selectDate(schedule[0].date));
-      }
+      handleSelectDate(isTodayAvailable ? today : schedule[0].date);
     }
-  }, [dispatch, schedule, selectedDate, isLoadingSchedule]);
-
-  // Get sessions for selected date (memoized for performance)
-  const currentSessions = useMemo((): SessionListItem[] => {
-    const daySchedule = schedule.find((d) => d.date === selectedDate);
-    return daySchedule?.sessions || [];
-  }, [schedule, selectedDate]);
-
-  // Handle date selection
-  const handleDateSelect = (date: string) => {
-    dispatch(selectDate(date));
-  };
+  }, [
+    schedule,
+    selectedDate,
+    isLoadingSchedule,
+    loadScheduleData,
+    handleSelectDate,
+  ]);
 
   // Handle session selection
-  const handleSessionSelect = (sessionId: string) => {
-    dispatch(selectSession(sessionId));
-    // Load session details only if not already loaded
-    if (!sessionDetails?.sessionId) {
-      dispatch(loadSessionDetails());
-    }
+  const onSessionSelect = (sessionId: string) => {
+    handleSelectSession(sessionId);
+    loadSession(sessionId);
   };
 
-  // Handle modal close
-  const handleModalClose = () => {
-    dispatch(clearSelectedSession());
-  };
-
-  if (isError) {
+  // Navigate to error page if there's an error
+  if (bookingError) {
     navigate("/error");
   }
 
@@ -109,19 +91,19 @@ export default function SessionsPage() {
       ) : (
         <>
           <DateSelector
-            dates={schedule.map((d) => d.date)}
+            dates={availableDates}
             selectedDate={selectedDate}
-            onDateSelect={handleDateSelect}
+            onDateSelect={handleSelectDate}
           />
           <SessionList
             sessions={currentSessions}
-            onSessionSelect={handleSessionSelect}
+            onSessionSelect={onSessionSelect}
           />
         </>
       )}
       <BookingModal
-        open={!!selectedSessionId}
-        onClose={handleModalClose}
+        open={isSessionSelected}
+        onClose={handleClearSession}
         sessionDetails={sessionDetails}
         date={selectedDate}
       />

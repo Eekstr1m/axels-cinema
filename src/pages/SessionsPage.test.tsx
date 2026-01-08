@@ -3,22 +3,27 @@ import userEvent from "@testing-library/user-event";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
-import cinemaReducer from "../redux/cinemaSlice";
+import scheduleReducer from "../redux/slices/scheduleSlice";
+import bookingReducer from "../redux/slices/bookingSlice";
+import paymentReducer from "../redux/slices/paymentSlice";
 import { SessionsPage } from ".";
-import type { SessionDetails, BookedTicket } from "../types";
 
 const mockStore = configureStore({
   reducer: {
-    cinema: cinemaReducer,
+    schedule: scheduleReducer,
+    booking: bookingReducer,
+    payment: paymentReducer,
   },
 });
 
 const scheduleStore = configureStore({
   reducer: {
-    cinema: cinemaReducer,
+    schedule: scheduleReducer,
+    booking: bookingReducer,
+    payment: paymentReducer,
   },
   preloadedState: {
-    cinema: {
+    schedule: {
       schedule: [
         {
           date: "2026-01-10",
@@ -32,14 +37,21 @@ const scheduleStore = configureStore({
           sessions: [{ id: "session-3", time: "20:00" }],
         },
       ],
-      sessionDetails: {} as SessionDetails,
       selectedDate: "2026-01-10",
+      isLoading: false,
+      error: null,
+    },
+    booking: {
+      sessionDetails: null,
       selectedSessionId: null,
-      isLoadingSchedule: false,
+      bookedTicket: null,
       isLoadingSession: false,
-      bookedTicket: {} as BookedTicket,
-      isProcessingPayment: false,
-      isError: false,
+      error: null,
+    },
+    payment: {
+      isProcessing: false,
+      isSuccessful: false,
+      error: null,
     },
   },
 });
@@ -60,7 +72,14 @@ describe(SessionsPage, () => {
   test("SessionsPage show loading spinner when loading schedule", () => {
     const loadingStore = configureStore({
       reducer: {
-        cinema: (state = { schedule: [], isLoadingSchedule: true }) => state,
+        schedule: () => ({
+          schedule: [],
+          selectedDate: "",
+          isLoading: true,
+          error: null,
+        }),
+        booking: bookingReducer,
+        payment: paymentReducer,
       },
     });
 

@@ -2,30 +2,38 @@ import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
 import { configureStore } from "@reduxjs/toolkit";
-import cinemaReducer from "../redux/cinemaSlice";
+import scheduleReducer from "../redux/slices/scheduleSlice";
+import bookingReducer from "../redux/slices/bookingSlice";
+import paymentReducer from "../redux/slices/paymentSlice";
 import { PaymentPage } from ".";
 
 const emptyStore = configureStore({
   reducer: {
-    cinema: cinemaReducer,
+    schedule: scheduleReducer,
+    booking: bookingReducer,
+    payment: paymentReducer,
   },
 });
 
 const bookingStore = configureStore({
   reducer: {
-    cinema: (
-      state = {
-        bookedTicket: {
-          sessionId: "session-1",
-          date: "2026-01-05",
-          time: "14:00",
-          seats: [
-            { row: 1, number: 5 },
-            { row: 1, number: 6 },
-          ],
-        },
-      }
-    ) => state,
+    schedule: scheduleReducer,
+    booking: () => ({
+      sessionDetails: null,
+      selectedSessionId: null,
+      bookedTicket: {
+        sessionId: "session-1",
+        date: "2026-01-05",
+        time: "14:00",
+        seats: [
+          { row: 1, number: 5 },
+          { row: 1, number: 6 },
+        ],
+      },
+      isLoadingSession: false,
+      error: null,
+    }),
+    payment: paymentReducer,
   },
 });
 
