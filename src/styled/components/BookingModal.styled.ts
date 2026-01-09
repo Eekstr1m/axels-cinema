@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import { DataGrid } from "@mui/x-data-grid/DataGrid";
 
 export const LoadingBox = styled(Box)({
   display: "flex",
@@ -57,56 +58,6 @@ export const SeatRow = styled(Box)(({ theme }) => ({
   gap: theme.spacing(0.5),
   marginBottom: theme.spacing(0.5),
 }));
-
-export const RowNumber = styled(Box)(({ theme }) => ({
-  width: 30,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: theme.palette.text.secondary,
-}));
-
-export const SeatBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "isBooked" && prop !== "isSelected",
-})<{ isBooked?: boolean; isSelected?: boolean }>(
-  ({ theme, isBooked, isSelected }) => ({
-    width: 40,
-    height: 40,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: `1px solid ${
-      isBooked
-        ? theme.palette.error.main
-        : isSelected
-        ? theme.palette.success.main
-        : theme.palette.grey[400]
-    }`,
-    backgroundColor: isBooked
-      ? theme.palette.error.light
-      : isSelected
-      ? theme.palette.success.main
-      : theme.palette.background.paper,
-    color: isBooked
-      ? theme.palette.error.dark
-      : isSelected
-      ? "white"
-      : theme.palette.text.primary,
-    cursor: isBooked ? "not-allowed" : "pointer",
-    borderRadius: theme.spacing(1),
-    fontSize: "0.75rem",
-    fontWeight: isSelected ? 600 : 400,
-    transition: "all 0.2s",
-    "&:hover": {
-      transform: isBooked ? "none" : "scale(1.1)",
-      backgroundColor: isBooked
-        ? theme.palette.error.light
-        : isSelected
-        ? theme.palette.success.dark
-        : theme.palette.action.hover,
-    },
-  })
-);
 
 export const LegendBox = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -181,3 +132,79 @@ export const CancelButton = styled(Button)({
 export const BookButton = styled(Button)({
   fontWeight: 600,
 });
+
+export const DataGridContainer = styled(Box)(({ theme }) => ({
+  width: "100%",
+  marginBottom: theme.spacing(3),
+}));
+
+export const StyledDataGrid = styled(DataGrid)({
+  border: "none",
+  // width: "fit-content",
+  "& .MuiDataGrid-cell": {
+    border: "none",
+    padding: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  "& .MuiDataGrid-columnHeaders": {
+    display: "none",
+  },
+  "& .MuiDataGrid-row": {
+    "&:hover": {
+      backgroundColor: "transparent",
+    },
+  },
+  "& .MuiDataGrid-virtualScroller": {
+    marginTop: "0 !important",
+  },
+});
+
+export const RowNumber = styled(Box)(({ theme }) => ({
+  fontWeight: 400,
+  fontSize: "0.875rem",
+  color: theme.palette.text.secondary,
+}));
+
+export const SeatBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isBooked" && prop !== "isSelected",
+})<{ isBooked?: boolean; isSelected?: boolean }>(
+  ({ theme, isBooked, isSelected }) => ({
+    width: 40,
+    height: 40,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: `1px solid ${
+      isBooked
+        ? theme.palette.error.main
+        : isSelected
+        ? theme.palette.success.main
+        : theme.palette.grey[400]
+    }`,
+    backgroundColor: isBooked
+      ? theme.palette.error.light
+      : isSelected
+      ? theme.palette.success.main
+      : theme.palette.background.paper,
+    color: isBooked
+      ? theme.palette.error.dark
+      : isSelected
+      ? "white"
+      : theme.palette.text.primary,
+    cursor: isBooked ? "not-allowed" : "pointer",
+    borderRadius: theme.spacing(1),
+    fontSize: "0.75rem",
+    fontWeight: isSelected ? 600 : 400,
+    transition: "all 0.2s",
+    "&:hover": {
+      transform: isBooked ? "none" : "scale(1.1)",
+      backgroundColor: isBooked
+        ? theme.palette.error.light
+        : isSelected
+        ? theme.palette.success.dark
+        : theme.palette.action.hover,
+    },
+  })
+);

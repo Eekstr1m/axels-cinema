@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 
 // Redux
 import { useDispatch } from "react-redux";
@@ -9,45 +9,46 @@ import { bookSeats } from "../redux/slices/bookingSlice";
 import type { AppDispatch } from "../redux/store";
 
 // MUI Components
-import DialogContent from "@mui/material/DialogContent";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
-import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Typography from "@mui/material/Typography";
+import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid/models";
 
 // MUI Icons
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import EventSeatIcon from "@mui/icons-material/EventSeat";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import EventSeatIcon from "@mui/icons-material/EventSeat";
 
 // Styled Components
 import {
+  BookButton,
   BookingHeading,
+  CancelButton,
   DialogActionsBox,
   InfoBox,
   InfoItem,
   LegendBox,
   LegendItem,
   LegendSquare,
-  RowNumber,
+  LoadingBox,
   ScreenBox,
-  SeatBox,
-  SeatRow,
-  SeatsContainer,
   SelectedSeatsChips,
   SelectedSeatsHeader,
-  SelectedSeatsInfo,
-  CancelButton,
-  BookButton,
-  LoadingBox,
   SelectedSeatsHeading,
+  SelectedSeatsInfo,
+  DataGridContainer,
+  StyledDataGrid,
+  RowNumber,
+  SeatBox,
 } from "../styled/components/BookingModal.styled";
 
 // Other
-import { formatDate } from "../utils/utils";
 import type { Seat, SessionDetails } from "../types";
+import { formatDate } from "../utils/utils";
 
 export default function BookingModal({
   open,
@@ -70,27 +71,89 @@ export default function BookingModal({
     { row: number; number: number }[]
   >([]);
 
-  const handleSeatClick = (seat: Seat) => {
+  const handleSeatClick = useCallback((seat: Seat) => {
     if (seat.isBooked) return;
 
-    const seatIndex = selectedSeats.findIndex(
-      (s) => s.row === seat.row && s.number === seat.number
-    );
+    setSelectedSeats((prevSeats) => {
+      const seatIndex = prevSeats.findIndex(
+        (s) => s.row === seat.row && s.number === seat.number
+      );
 
-    if (seatIndex > -1) {
-      // Deselect seat
-      setSelectedSeats(selectedSeats.filter((_, i) => i !== seatIndex));
-    } else {
-      // Select seat
-      setSelectedSeats([
-        ...selectedSeats,
-        { row: seat.row, number: seat.number },
-      ]);
-    }
-  };
+      if (seatIndex > -1) {
+        // Deselect seat
+        return prevSeats.filter((_, i) => i !== seatIndex);
+      } else {
+        // Select seat
+        return [...prevSeats, { row: seat.row, number: seat.number }];
+      }
+    });
+  }, []);
 
-  const isSeatSelected = (seat: Seat): boolean =>
-    selectedSeats.some((s) => s.row === seat.row && s.number === seat.number);
+  // Transform seats data for DataGrid
+  const rows = useMemo(() => {
+    if (!sessionDetails?.seats) return [];
+
+    return sessionDetails.seats.map((row, rowIndex) => {
+      const rowData: Record<string, number | Seat> = {
+        id: rowIndex + 1,
+        row: rowIndex + 1,
+      };
+      row.forEach((seat) => {
+        rowData[`seat_${seat.number}`] = seat;
+      });
+      return rowData;
+    });
+  }, [sessionDetails]);
+
+  // Generate columns dynamically based on seat numbers
+  const columns: GridColDef[] = useMemo(() => {
+    if (!sessionDetails?.seats || sessionDetails.seats.length === 0) return [];
+
+    const firstRow = sessionDetails.seats[0];
+    const seatColumns: GridColDef[] = firstRow.map((seat) => ({
+      field: `seat_${seat.number}`,
+      headerName: `${seat.number}`,
+      width: 46,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: GridRenderCellParams) => {
+        const seatData: Seat = params.value;
+        if (!seatData) return null;
+
+        const isSelected = selectedSeats.some(
+          (s) => s.row === seatData.row && s.number === seatData.number
+        );
+
+        return (
+          <SeatBox
+            onClick={() => !seatData.isBooked && handleSeatClick(seatData)}
+            isBooked={seatData.isBooked}
+            isSelected={isSelected}
+          >
+            {seatData.number}
+          </SeatBox>
+        );
+      },
+    }));
+
+    return [
+      {
+        field: "row",
+        headerName: "Row",
+        width: 36,
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        align: "center",
+        headerAlign: "center",
+        renderCell: (params) => <RowNumber>{params.value}</RowNumber>,
+      },
+      ...seatColumns,
+    ];
+  }, [sessionDetails, selectedSeats, handleSeatClick]);
 
   const handleClose = () => {
     setSelectedSeats([]);
@@ -119,13 +182,7 @@ export default function BookingModal({
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      maxWidth="md"
-      fullWidth
-      fullScreen={fullScreen}
-    >
+    <Dialog open={open} onClose={handleClose} fullWidth fullScreen={fullScreen}>
       <DialogTitle>
         <BookingHeading>Booking Tickets</BookingHeading>
       </DialogTitle>
@@ -153,28 +210,18 @@ export default function BookingModal({
           <Typography variant="body2">screen</Typography>
         </ScreenBox>
 
-        {/* Seats */}
-        <SeatsContainer>
-          {sessionDetails.seats.map((row, rowIndex) => (
-            <SeatRow key={rowIndex}>
-              <RowNumber>{rowIndex + 1}</RowNumber>
-              {row.map((seat) => {
-                const isSelected = isSeatSelected(seat);
-
-                return (
-                  <SeatBox
-                    key={`${seat.row}-${seat.number}`}
-                    onClick={() => handleSeatClick(seat)}
-                    isBooked={seat.isBooked}
-                    isSelected={isSelected}
-                  >
-                    {seat.number}
-                  </SeatBox>
-                );
-              })}
-            </SeatRow>
-          ))}
-        </SeatsContainer>
+        {/* Seats using DataGrid */}
+        <DataGridContainer>
+          <StyledDataGrid
+            rows={rows}
+            columns={columns}
+            disableRowSelectionOnClick
+            hideFooter
+            rowHeight={46}
+            columnHeaderHeight={0}
+            autoHeight
+          />
+        </DataGridContainer>
 
         {/* Booking legend */}
         <LegendBox>
