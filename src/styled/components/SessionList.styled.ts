@@ -33,3 +33,8 @@ export const TimeBox = styled(Box)(({ theme }) => ({
 export const SessionTimeText = styled(Typography)({
   fontWeight: 600,
 });
+
+export const NoSessionsText = styled(Typography)({
+  width: "100%",
+  textAlign: "center",
+});

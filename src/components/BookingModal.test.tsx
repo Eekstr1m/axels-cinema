@@ -56,7 +56,7 @@ describe(BookingModal, () => {
     );
 
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
-    expect(screen.queryByText("Booking Tickets")).not.toBeInTheDocument();
+    expect(screen.queryByText("Booking Tickets")).toBeInTheDocument();
   });
 
   test("BookingModal does not render when open is false", () => {
@@ -243,12 +243,19 @@ describe(BookingModal, () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  test('BookingModal matches snapshot', () => {
-    const { asFragment } = render(<Provider store={mockStore}>
+  test("BookingModal matches snapshot", () => {
+    const { asFragment } = render(
+      <Provider store={mockStore}>
         <BrowserRouter>
-        <BookingModal open={true} onClose={onClose} date='2026-01-10' sessionDetails={mockSessionDetails} />
+          <BookingModal
+            open={true}
+            onClose={onClose}
+            date="2026-01-10"
+            sessionDetails={mockSessionDetails}
+          />
         </BrowserRouter>
-    </Provider>)
+      </Provider>
+    );
 
     expect(asFragment()).toMatchSnapshot();
   });

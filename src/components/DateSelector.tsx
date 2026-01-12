@@ -1,4 +1,5 @@
 // Styled Components
+import Typography from "@mui/material/Typography";
 import {
   DateChip,
   DateSelectorContainer,
@@ -22,16 +23,20 @@ export default function DateSelector({
     <DateSelectorContainer>
       <DatesHeading variant="h4">Select a date</DatesHeading>
       <DatesGrid container spacing={2}>
-        {dates.map((date) => (
-          <DateChip
-            key={date}
-            label={formatDate(date)}
-            onClick={() => onDateSelect(date)}
-            isSelected={selectedDate === date}
-            color={selectedDate === date ? "primary" : "default"}
-            variant={selectedDate === date ? "filled" : "outlined"}
-          />
-        ))}
+        {dates.length ? (
+          dates.map((date) => (
+            <DateChip
+              key={date}
+              label={formatDate(date)}
+              onClick={() => onDateSelect(date)}
+              isSelected={selectedDate === date}
+              color={selectedDate === date ? "primary" : "default"}
+              variant={selectedDate === date ? "filled" : "outlined"}
+            />
+          ))
+        ) : (
+          <Typography variant="h5">No available dates</Typography>
+        )}
       </DatesGrid>
     </DateSelectorContainer>
   );

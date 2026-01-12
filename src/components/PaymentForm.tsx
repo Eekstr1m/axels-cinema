@@ -182,7 +182,7 @@ export default function PaymentForm() {
         disabled={isProcessingPayment}
       >
         {isProcessingPayment ? (
-          <CircularProgress color="inherit" />
+          <CircularProgress color="inherit" aria-label="Processing payment" />
         ) : (
           "Confirm Payment"
         )}

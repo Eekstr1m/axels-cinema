@@ -18,7 +18,13 @@ import type { RootState } from "../redux/store";
 export default function PaymentPage() {
   const { bookedTicket } = useSelector((state: RootState) => state.cinema);
 
-  if (Object.keys(bookedTicket).length === 0) {
+  const hasBooking =
+    bookedTicket.sessionId &&
+    bookedTicket.date &&
+    bookedTicket.time &&
+    bookedTicket.seats.length;
+
+  if (!hasBooking) {
     return (
       <PaymentContainer>
         <PaymentPaper>
@@ -37,7 +43,7 @@ export default function PaymentPage() {
 
         {/* Booking Summary */}
         <SummaryBox>
-          <SummaryHeading variant="h6">Booking Summary</SummaryHeading>
+          <SummaryHeading variant="h5">Booking Summary</SummaryHeading>
 
           <SummaryItem>
             <SummaryLabel>Movie: </SummaryLabel>

@@ -106,12 +106,19 @@ export default function BookingModal({
     }
   };
 
-  if (!sessionDetails || !sessionDetails.seats) {
+  if (!date || !sessionDetails || !sessionDetails.seats) {
     return (
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogTitle>
+          <BookingHeading>Booking Tickets</BookingHeading>
+        </DialogTitle>
         <DialogContent>
           <LoadingBox>
-            <CircularProgress />
+            {date === "" ? (
+              <Typography variant="h6">Please select a date.</Typography>
+            ) : (
+              <CircularProgress />
+            )}
           </LoadingBox>
         </DialogContent>
       </Dialog>

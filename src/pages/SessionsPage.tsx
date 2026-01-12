@@ -109,7 +109,7 @@ export default function SessionsPage() {
 
       {isLoadingSchedule ? (
         <LoadingBox>
-          <CircularProgress />
+          <CircularProgress aria-label="Loading cinema schedule" />
         </LoadingBox>
       ) : (
         <>

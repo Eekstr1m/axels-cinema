@@ -17,11 +17,11 @@ exports[`PaymentPage PaymentPage matches snapshot 1`] = `
       <div
         class="MuiBox-root css-1h7k0ir"
       >
-        <h6
-          class="MuiTypography-root MuiTypography-h6 css-9qkvus-MuiTypography-root"
+        <h5
+          class="MuiTypography-root MuiTypography-h5 css-1j80v0t-MuiTypography-root"
         >
           Booking Summary
-        </h6>
+        </h5>
         <div
           class="MuiBox-root css-1ihr51b"
         >
