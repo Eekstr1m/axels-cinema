@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jQuery Todo App</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="sub-heading">DummyJSON API</p>
+          <h1>Todo Board</h1>
+        </div>
+        <div class="stats" id="stats">
+          <div class="stat">
+            <span class="stat-label">Total</span>
+            <span class="stat-value" id="statTotal">0</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel">
+        <form id="addTodoForm" class="add-form">
+          <input
+            type="text"
+            id="todoInput"
+            placeholder="New task..."
+            autocomplete="off"
+          />
+          <button type="submit" id="addBtn">Add</button>
+        </form>
+      </section>
+
+      <section class="panel list-panel">
+        <div id="loader" class="loader" hidden>Loading...</div>
+        <div id="todoList" class="todo-list"></div>
+        <button id="loadMoreBtn" class="ghost-btn" hidden>Load more</button>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
