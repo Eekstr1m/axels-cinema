@@ -10,7 +10,7 @@ export const StyledPaper = styled(Paper)(({ theme }) => ({
 export const HeaderPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   marginBottom: theme.spacing(4),
-  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
   color: "white",
 }));
 

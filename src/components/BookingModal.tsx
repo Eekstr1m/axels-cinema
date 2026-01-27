@@ -5,7 +5,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { bookSeats } from "../redux/cinemaSlice";
+import { setBookingSummary } from "../redux/cinemaSlice";
 import type { AppDispatch } from "../redux/store";
 
 // MUI Components
@@ -47,7 +47,8 @@ import {
 
 // Other
 import { formatDate } from "../utils/utils";
-import type { Seat, SessionDetails } from "../types";
+import type { DetailedSession } from "../interfaces/sessions.interface";
+import type { BookingSeat, Seat } from "../interfaces/seat.interface";
 
 export default function BookingModal({
   open,
@@ -58,23 +59,22 @@ export default function BookingModal({
   open: boolean;
   onClose: () => void;
   date: string;
-  sessionDetails: SessionDetails | null;
+  sessionDetails: DetailedSession | null;
 }) {
   // Fullscreen dialog for small devices
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   const navigate = useNavigate();
 
   const dispatch = useDispatch<AppDispatch>();
-  const [selectedSeats, setSelectedSeats] = useState<
-    { row: number; number: number }[]
-  >([]);
+  const [selectedSeats, setSelectedSeats] = useState<BookingSeat[]>([]);
 
   const handleSeatClick = (seat: Seat) => {
     if (seat.isBooked) return;
 
     const seatIndex = selectedSeats.findIndex(
-      (s) => s.row === seat.row && s.number === seat.number
+      (s) => s.row === seat.row && s.number === seat.number,
     );
 
     if (seatIndex > -1) {
@@ -99,7 +99,18 @@ export default function BookingModal({
 
   const handleBook = () => {
     if (selectedSeats.length && sessionDetails) {
-      dispatch(bookSeats(selectedSeats));
+      dispatch(
+        setBookingSummary({
+          sessionId: sessionDetails._id,
+          movieId: sessionDetails.movieId._id,
+          movieTitle: sessionDetails.movieId.title,
+          date: sessionDetails.date,
+          bookedSeats: selectedSeats,
+          time: sessionDetails.startTime,
+          pricePerSeat: sessionDetails.price,
+          totalPrice: selectedSeats.length * sessionDetails.price,
+        }),
+      );
       setSelectedSeats([]);
       onClose();
       navigate("/payment");
@@ -123,6 +134,7 @@ export default function BookingModal({
       open={open}
       onClose={handleClose}
       maxWidth="md"
+      scroll="body"
       fullWidth
       fullScreen={fullScreen}
     >
@@ -134,16 +146,16 @@ export default function BookingModal({
         {/* Information about the booking time */}
         <InfoBox>
           <InfoItem>
-            <CalendarTodayIcon fontSize="small" color="primary" />
+            <CalendarTodayIcon />
             <Typography variant="body1">
               <strong>Date:</strong> {formatDate(date)}
             </Typography>
           </InfoItem>
 
           <InfoItem>
-            <AccessTimeIcon fontSize="small" color="primary" />
+            <AccessTimeIcon />
             <Typography variant="body1">
-              <strong>Time:</strong> {sessionDetails.time}
+              <strong>Time:</strong> {sessionDetails.startTime}
             </Typography>
           </InfoItem>
         </InfoBox>

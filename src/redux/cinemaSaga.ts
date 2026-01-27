@@ -1,123 +1,157 @@
-import { call, put, select, takeLatest } from "redux-saga/effects";
 import type { PayloadAction } from "@reduxjs/toolkit";
-
-// Actions
-import {
-  setSchedule,
-  setSessionDetails,
-  bookSeatsSuccess,
-  initializeSchedule,
-  loadSessionDetails,
-  bookSeats,
-  setErrorState,
-  processPayment,
-  processPaymentSuccess,
-} from "./cinemaSlice";
+import { call, put, takeLatest } from "redux-saga/effects";
 
 // API
 import {
-  fetchSessionDetails,
-  fetchSessionsList,
-  postPayment,
+  fetchMovies,
+  fetchSessionById,
+  fetchSessionsByDateForMovie,
+  fetchSessionsDatesByMovieId,
+  postBookingData,
 } from "../api/cinemaApi";
 
+// Actions
+import {
+  initializeMovies,
+  loadMovieSessionsDates,
+  loadSelectedSessions,
+  loadSelectedSessionTime,
+  sendBookingData,
+  setErrorMessage,
+  setMovies,
+  setMovieSessionsDates,
+  setPaymentStatus,
+  setSelectedSessions,
+  setSelectedSessionTime,
+} from "./cinemaSlice";
+
 // Types
-import type { RootState } from "./store";
 import type {
-  AllPaymentInfo,
-  DaySchedule,
-  PaymentFormData,
-  SessionDetails,
-  SessionsListResponse,
-} from "../types";
+  BookingData,
+  SavedBookingData,
+} from "../interfaces/booking.interface";
+import type { Movie } from "../interfaces/movies.interface";
+import type {
+  DetailedSession,
+  Session,
+} from "../interfaces/sessions.interface";
 
-// cinema/initializeSchedule saga
-export function* initializeScheduleSaga() {
+// cinema/initializeMovies saga
+export function* initializeMoviesSaga() {
   try {
-    // Load sessions list (without seat details)
-    const response: SessionsListResponse = yield call(fetchSessionsList);
+    const response: Movie[] = yield call(fetchMovies);
 
-    const schedule: DaySchedule[] = response.sessionsList;
-
-    // Dispatch action to set schedule
-    yield put(setSchedule(schedule));
+    yield put(setMovies(response));
   } catch (error) {
+    console.error("Error loading movies:", error);
+    yield put(
+      setErrorMessage("Failed to load movies. Please try again later."),
+    );
+  }
+}
+
+// cinema/loadMovieSessionsDates saga
+export function* loadMovieSessionsDatesSaga(action: PayloadAction<string>) {
+  try {
+    if (!action.payload) {
+      throw new Error("Movie ID is required to load sessions.");
+    }
+
+    const response: string[] = yield call(
+      fetchSessionsDatesByMovieId,
+      action.payload,
+    );
+
+    yield put(setMovieSessionsDates(response));
+  } catch (error) {
+    yield put(
+      setErrorMessage("Failed to load sessions list. Please try again later."),
+    );
     console.error("Error loading sessions list:", error);
-    yield put(setErrorState("Error loading sessions list"));
   }
 }
 
-// cinema/setSessionDetails saga
-export function* loadSessionDetailsSaga() {
-  try {
-    // Load detailed session info with seats from mockable.io URL
-    const response: SessionDetails = yield call(fetchSessionDetails);
-
-    // Dispatch action to set session details
-    yield put(setSessionDetails(response));
-  } catch (error) {
-    console.error("Error loading session details:", error);
-    yield put(setErrorState("Error loading session details"));
-  }
-}
-
-// cinema/bookSeats saga
-export function* bookSeatsSaga(
-  action: PayloadAction<{ row: number; number: number }[]>
+// cinema/loadSelectedSessions saga
+export function* loadSelectedSessionsSaga(
+  action: PayloadAction<{ movieId: string; date: string }>,
 ) {
   try {
-    const state: RootState = yield select();
-    const { selectedSessionId, selectedDate } = state.cinema;
+    if (!action.payload) {
+      throw new Error(
+        "Movie ID and date are required to load session details.",
+      );
+    }
 
-    if (!selectedSessionId) return;
+    const { movieId, date } = action.payload;
 
-    // Dispatch action to update booked seats
+    const response: Session[] = yield call(
+      fetchSessionsByDateForMovie,
+      movieId,
+      date,
+    );
+
+    yield put(setSelectedSessions(response));
+  } catch (error) {
     yield put(
-      bookSeatsSuccess({
-        sessionId: selectedSessionId,
-        date: selectedDate,
-        seats: action.payload,
-      })
+      setErrorMessage("Failed to load sessions. Please try again later."),
     );
-  } catch (error) {
-    console.error("Error booking seats:", error);
-    yield put(setErrorState("Error booking seats"));
+    console.error("Error loading sessions:", error);
   }
 }
 
-// cinema/processPayment saga
-export function* processPaymentSaga(action: PayloadAction<PaymentFormData>) {
+// cinema/loadSelectedSessionTime saga
+export function* loadSelectedSessionTimeSaga(action: PayloadAction<string>) {
   try {
-    const state: RootState = yield select();
-    const { bookedTicket } = state.cinema;
-    const paymentData: PaymentFormData = action.payload;
+    if (!action.payload) {
+      throw new Error("Session ID is required to load session.");
+    }
 
-    // Simulate payment processing delay
-    yield call(() => new Promise((res) => setTimeout(res, 1500)));
+    const sessionId = action.payload;
 
-    const allPaymentInfo: AllPaymentInfo = {
-      ...paymentData,
-      bookedTicket,
-    };
+    const response: DetailedSession = yield call(fetchSessionById, sessionId);
 
-    // Here you can make a call to the real payment API
-    const response: { success: boolean } = yield call(
-      postPayment,
-      allPaymentInfo
-    );
-
-    yield put(processPaymentSuccess());
-    console.log("✅ Payment processed successfully", response.success);
+    yield put(setSelectedSessionTime(response));
   } catch (error) {
-    console.log("Error processing payment", error);
-    yield put(setErrorState("Error processing payment"));
+    yield put(
+      setErrorMessage("Failed to load session. Please try again later."),
+    );
+    console.error("Error loading session:", error);
   }
 }
 
-// Cinema saga to handle side effects
+// cinema/sendBookingData saga
+export function* sendBookingDataSaga(action: PayloadAction<BookingData>) {
+  try {
+    if (!action.payload) {
+      throw new Error("Booking data is required to send booking.");
+    }
+
+    yield put(setPaymentStatus("processing"));
+
+    const bookingData = action.payload;
+
+    const response: SavedBookingData = yield call(postBookingData, bookingData);
+
+    if (!response || !response._id) {
+      yield put(setPaymentStatus("failed"));
+      throw new Error("Booking failed. Please try again.");
+    }
+
+    yield put(setPaymentStatus("successful"));
+  } catch (error) {
+    yield put(setPaymentStatus("failed"));
+    yield put(
+      setErrorMessage("Failed to send booking data. Please try again later."),
+    );
+    console.error("Error sending booking data:", error);
+  }
+}
+
+// cinema saga to handle side effects
 export function* cinemaSaga() {
-  yield takeLatest(initializeSchedule.type, initializeScheduleSaga);
-  yield takeLatest(loadSessionDetails.type, loadSessionDetailsSaga);
-  yield takeLatest(bookSeats.type, bookSeatsSaga);
-  yield takeLatest(processPayment.type, processPaymentSaga);
+  yield takeLatest(initializeMovies.type, initializeMoviesSaga);
+  yield takeLatest(loadMovieSessionsDates.type, loadMovieSessionsDatesSaga);
+  yield takeLatest(loadSelectedSessions.type, loadSelectedSessionsSaga);
+  yield takeLatest(loadSelectedSessionTime.type, loadSelectedSessionTimeSaga);
+  yield takeLatest(sendBookingData.type, sendBookingDataSaga);
 }

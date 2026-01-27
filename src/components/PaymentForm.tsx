@@ -4,16 +4,26 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { processPayment, resetPaymentState } from "../redux/cinemaSlice";
 import type { RootState } from "../redux/store";
+import {
+  resetPaymentState,
+  sendBookingData,
+  setBookingData,
+} from "../redux/cinemaSlice";
 
 // MUI
 import CircularProgress from "@mui/material/CircularProgress";
 import EmailIcon from "@mui/icons-material/Email";
+import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import LockIcon from "@mui/icons-material/Lock";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 // Styled Components
 import {
+  ColoredInputAdornment,
   FormBox,
   InfoGrid,
   InfoInlineSection,
@@ -24,14 +34,14 @@ import {
 } from "../styled/components/PaymentForm.styled";
 
 // Other
-import type { PaymentFormData } from "../types";
 import { paymentValidationSchema } from "../utils/paymentValidationSchema";
+import type { PaymentFormData } from "../interfaces/booking.interface";
 
 export default function PaymentForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isProcessingPayment, isError, isPaymentSuccessful } = useSelector(
-    (state: RootState) => state.cinema
+  const { bookingSummary, paymentStatus } = useSelector(
+    (state: RootState) => state.cinema,
   );
 
   const {
@@ -43,35 +53,45 @@ export default function PaymentForm() {
     mode: "onBlur",
   });
 
-  const onSubmit = (data: PaymentFormData) => {
-    dispatch(processPayment(data));
-  };
-
-  if (isError) {
-    navigate("/error");
+  if (!bookingSummary) {
+    return null;
   }
 
-  if (isPaymentSuccessful) {
+  const onSubmit = (data: PaymentFormData) => {
+    const bookingData = {
+      sessionId: bookingSummary.sessionId,
+      movieId: bookingSummary.movieId,
+      date: bookingSummary.date,
+      time: bookingSummary.time,
+      bookedSeats: bookingSummary.bookedSeats,
+      pricePerSeat: bookingSummary.pricePerSeat,
+      totalPrice: bookingSummary.totalPrice,
+      fullName: data.fullName,
+      email: data.email,
+      phone: data.phone,
+    };
+    dispatch(setBookingData(bookingData));
+    dispatch(sendBookingData(bookingData));
+  };
+
+  if (paymentStatus === "successful") {
     return (
       <SuccessfulBox>
-        <SectionHeading
-          variant="h5"
-          align="center"
-          color="primary"
-          textAlign={"center"}
-        >
-          Payment Successful!
+        <CheckCircleIcon />
+        <SectionHeading variant="h4">Payment Successful!</SectionHeading>
+        <SectionHeading variant="body1">
+          Your tickets have been confirmed. Check your email for details.
         </SectionHeading>
         <SubmitButton
           type="submit"
           variant="contained"
-          size="small"
+          size="large"
           onClick={() => {
             navigate("/");
             dispatch(resetPaymentState());
           }}
         >
-          Back to main page
+          Back to Sessions
         </SubmitButton>
       </SuccessfulBox>
     );
@@ -89,32 +109,62 @@ export default function PaymentForm() {
         <StyledTextField
           fullWidth
           label="Full Name"
+          placeholder="John Doe"
           {...register("fullName")}
           error={!!errors.fullName}
           helperText={errors.fullName?.message}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <ColoredInputAdornment position="start">
+                  <PersonIcon />
+                </ColoredInputAdornment>
+              ),
+            },
+          }}
         />
         <InfoInlineSection>
           <StyledTextField
             fullWidth
             label="Email"
             type="email"
+            placeholder="john.doe@example.com"
             {...register("email")}
             error={!!errors.email}
             helperText={errors.email?.message}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <ColoredInputAdornment position="start">
+                    <EmailIcon />
+                  </ColoredInputAdornment>
+                ),
+              },
+            }}
           />
           <StyledTextField
             fullWidth
             label="Phone Number"
+            placeholder="+1 234 567 8901"
             {...register("phone")}
             error={!!errors.phone}
             helperText={errors.phone?.message}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <ColoredInputAdornment position="start">
+                    <PhoneIcon />
+                  </ColoredInputAdornment>
+                ),
+              },
+            }}
           />
         </InfoInlineSection>
       </InfoGrid>
 
       {/* Payment Information */}
       <SectionHeading variant="h6">
-        <EmailIcon />
+        <CreditCardIcon />
         Payment Information
       </SectionHeading>
 
@@ -136,6 +186,15 @@ export default function PaymentForm() {
           }}
           error={!!errors.cardNumber}
           helperText={errors.cardNumber?.message}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <ColoredInputAdornment position="start">
+                  <CreditCardIcon />
+                </ColoredInputAdornment>
+              ),
+            },
+          }}
         />
 
         <InfoInlineSection>
@@ -156,6 +215,15 @@ export default function PaymentForm() {
             }}
             error={!!errors.expiryDate}
             helperText={errors.expiryDate?.message}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <ColoredInputAdornment position="start">
+                    <CalendarTodayIcon />
+                  </ColoredInputAdornment>
+                ),
+              },
+            }}
           />
           <StyledTextField
             fullWidth
@@ -170,6 +238,15 @@ export default function PaymentForm() {
             }}
             error={!!errors.cvv}
             helperText={errors.cvv?.message}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <ColoredInputAdornment position="start">
+                    <LockIcon />
+                  </ColoredInputAdornment>
+                ),
+              },
+            }}
           />
         </InfoInlineSection>
       </InfoGrid>
@@ -179,12 +256,12 @@ export default function PaymentForm() {
         variant="contained"
         size="large"
         fullWidth
-        disabled={isProcessingPayment}
+        disabled={paymentStatus === "processing"}
       >
-        {isProcessingPayment ? (
-          <CircularProgress color="inherit" />
+        {paymentStatus === "processing" ? (
+          <CircularProgress color="inherit" size={24} />
         ) : (
-          "Confirm Payment"
+          <>Confirm Payment</>
         )}
       </SubmitButton>
     </FormBox>

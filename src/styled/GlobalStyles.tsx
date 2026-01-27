@@ -1,8 +1,9 @@
 import GlobalStyles from "@mui/material/GlobalStyles";
+import type { Theme } from "@mui/material/styles";
 
 export const IndexGlobalStyles = () => (
   <GlobalStyles
-    styles={{
+    styles={(theme: Theme) => ({
       ":root": {
         fontFamily: "system-ui, Avenir, Helvetica, Arial, sans-serif",
       },
@@ -13,8 +14,9 @@ export const IndexGlobalStyles = () => (
       },
       body: {
         margin: 0,
-        backgroundColor: "#f5f5f5",
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
       },
-    }}
+    })}
   />
 );

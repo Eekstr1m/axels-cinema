@@ -34,12 +34,18 @@ export const InfoItem = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing(2),
+
+  "& svg": {
+    fontSize: 24,
+    color: theme.palette.primary.main,
+  },
 }));
 
 export const ScreenBox = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   padding: theme.spacing(1),
   backgroundColor: theme.palette.grey[800],
+  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
   color: "white",
   textAlign: "center",
   borderRadius: "20px 20px 0 0",
@@ -79,19 +85,19 @@ export const SeatBox = styled(Box, {
       isBooked
         ? theme.palette.error.main
         : isSelected
-        ? theme.palette.success.main
-        : theme.palette.grey[400]
+          ? theme.palette.success.main
+          : theme.palette.grey[400]
     }`,
     backgroundColor: isBooked
       ? theme.palette.error.light
       : isSelected
-      ? theme.palette.success.main
-      : theme.palette.background.paper,
+        ? theme.palette.success.main
+        : theme.palette.background.paper,
     color: isBooked
       ? theme.palette.error.dark
       : isSelected
-      ? "white"
-      : theme.palette.text.primary,
+        ? "white"
+        : theme.palette.text.primary,
     cursor: isBooked ? "not-allowed" : "pointer",
     borderRadius: theme.spacing(1),
     fontSize: "0.75rem",
@@ -102,10 +108,10 @@ export const SeatBox = styled(Box, {
       backgroundColor: isBooked
         ? theme.palette.error.light
         : isSelected
-        ? theme.palette.success.dark
-        : theme.palette.action.hover,
+          ? theme.palette.success.dark
+          : theme.palette.action.hover,
     },
-  })
+  }),
 );
 
 export const LegendBox = styled(Box)(({ theme }) => ({
@@ -178,6 +184,7 @@ export const CancelButton = styled(Button)({
   fontWeight: 400,
 });
 
-export const BookButton = styled(Button)({
+export const BookButton = styled(Button)(({ theme }) => ({
   fontWeight: 600,
-});
+  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+}));

@@ -1,13 +1,20 @@
 // Styled Components
 import {
-  DateChip,
+  DateCard,
+  DateCardDay,
+  DateCardMonth,
+  DateCardWeekday,
   DateSelectorContainer,
-  DatesGrid,
   DatesHeading,
+  DatesHeadingText,
+  DatesScrollContainer,
 } from "../styled/components/DateSelector.styled";
 
+// MUI Icons
+import EventIcon from "@mui/icons-material/Event";
+import { parseDate } from "../utils/utils";
+
 // Other
-import { formatDate } from "../utils/utils";
 
 export default function DateSelector({
   dates,
@@ -20,19 +27,34 @@ export default function DateSelector({
 }) {
   return (
     <DateSelectorContainer>
-      <DatesHeading variant="h4">Select a date</DatesHeading>
-      <DatesGrid container spacing={2}>
-        {dates.map((date) => (
-          <DateChip
-            key={date}
-            label={formatDate(date)}
-            onClick={() => onDateSelect(date)}
-            isSelected={selectedDate === date}
-            color={selectedDate === date ? "primary" : "default"}
-            variant={selectedDate === date ? "filled" : "outlined"}
-          />
-        ))}
-      </DatesGrid>
+      <DatesHeading>
+        <EventIcon />
+        <DatesHeadingText>Select a date</DatesHeadingText>
+      </DatesHeading>
+
+      <DatesScrollContainer>
+        {dates.map((date) => {
+          const isSelected = selectedDate === date;
+          const { day, weekday, month } = parseDate(date);
+
+          return (
+            <DateCard
+              key={date}
+              isSelected={isSelected}
+              onClick={() => onDateSelect(date)}
+              elevation={isSelected ? 8 : 2}
+            >
+              <DateCardWeekday isSelected={isSelected}>
+                {weekday}
+              </DateCardWeekday>
+
+              <DateCardDay isSelected={isSelected}>{day}</DateCardDay>
+
+              <DateCardMonth isSelected={isSelected}>{month}</DateCardMonth>
+            </DateCard>
+          );
+        })}
+      </DatesScrollContainer>
     </DateSelectorContainer>
   );
 }
