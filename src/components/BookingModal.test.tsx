@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import cinemaReducer from "../redux/cinemaSlice";
 import { BookingModal } from ".";
-import type { SessionDetails } from "../types";
+import type { DetailedSession } from "../interfaces/sessions.interface";
 
 const mockStore = configureStore({
   reducer: {
@@ -13,13 +13,15 @@ const mockStore = configureStore({
   },
 });
 
-const mockSessionDetails: SessionDetails = {
-  sessionId: "session-1",
+const mockSessionDetails: DetailedSession = {
+  _id: "session-1",
   date: "2026-01-10",
-  time: "18:00",
-  totalSeats: 20,
-  bookedSeats: 5,
-  availableSeats: 15,
+  startTime: "18:00",
+  movieId: {
+    _id: "movie-1",
+    title: "Mock Movie",
+  },
+  price: 12.5,
   seats: [
     [
       { row: 1, number: 1, isBooked: false },
@@ -52,7 +54,7 @@ describe(BookingModal, () => {
             sessionDetails={null}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
@@ -70,7 +72,7 @@ describe(BookingModal, () => {
             sessionDetails={null}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -87,7 +89,7 @@ describe(BookingModal, () => {
             sessionDetails={mockSessionDetails}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByText("Booking Tickets")).toBeInTheDocument();
@@ -108,13 +110,13 @@ describe(BookingModal, () => {
             sessionDetails={mockSessionDetails}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     // Get all seat elements by their numbers and border style
     const allElements = screen.getAllByText(/^[1-9]$/);
     const seatsWithBorder = allElements.filter(
-      (element) => window.getComputedStyle(element).border !== ""
+      (element) => window.getComputedStyle(element).border !== "",
     );
 
     expect(seatsWithBorder.length).toBe(8);
@@ -131,7 +133,7 @@ describe(BookingModal, () => {
             sessionDetails={mockSessionDetails}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByText("Available")).toBeInTheDocument();
@@ -150,7 +152,7 @@ describe(BookingModal, () => {
             sessionDetails={mockSessionDetails}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const user = userEvent.setup();
@@ -181,7 +183,7 @@ describe(BookingModal, () => {
             sessionDetails={mockSessionDetails}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const user = userEvent.setup();
@@ -207,7 +209,7 @@ describe(BookingModal, () => {
             sessionDetails={mockSessionDetails}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const user = userEvent.setup();
@@ -233,7 +235,7 @@ describe(BookingModal, () => {
             sessionDetails={mockSessionDetails}
           />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const user = userEvent.setup();
@@ -243,12 +245,19 @@ describe(BookingModal, () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  test('BookingModal matches snapshot', () => {
-    const { asFragment } = render(<Provider store={mockStore}>
+  test("BookingModal matches snapshot", () => {
+    const { asFragment } = render(
+      <Provider store={mockStore}>
         <BrowserRouter>
-        <BookingModal open={true} onClose={onClose} date='2026-01-10' sessionDetails={mockSessionDetails} />
+          <BookingModal
+            open={true}
+            onClose={onClose}
+            date="2026-01-10"
+            sessionDetails={mockSessionDetails}
+          />
         </BrowserRouter>
-    </Provider>)
+      </Provider>,
+    );
 
     expect(asFragment()).toMatchSnapshot();
   });

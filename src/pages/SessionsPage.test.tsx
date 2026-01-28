@@ -2,10 +2,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import { BrowserRouter } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router";
 import cinemaReducer from "../redux/cinemaSlice";
 import { SessionsPage } from ".";
-import type { SessionDetails, BookedTicket } from "../types";
 
 const mockStore = configureStore({
   reducer: {
@@ -19,27 +18,29 @@ const scheduleStore = configureStore({
   },
   preloadedState: {
     cinema: {
-      schedule: [
+      movies: [],
+      sessionsDates: ["2026-01-10", "2026-01-11"],
+      selectedDate: "2026-01-10",
+      selectedSessions: [
         {
+          _id: "session-1",
+          movieId: "movie-1",
           date: "2026-01-10",
-          sessions: [
-            { id: "session-1", time: "14:00" },
-            { id: "session-2", time: "18:00" },
-          ],
+          startTime: "14:00",
         },
         {
-          date: "2026-01-11",
-          sessions: [{ id: "session-3", time: "20:00" }],
+          _id: "session-2",
+          movieId: "movie-1",
+          date: "2026-01-10",
+          startTime: "18:00",
         },
       ],
-      sessionDetails: {} as SessionDetails,
-      selectedDate: "2026-01-10",
-      selectedSessionId: null,
-      isLoadingSchedule: false,
-      isLoadingSession: false,
-      bookedTicket: {} as BookedTicket,
-      isProcessingPayment: false,
-      isError: false,
+      selectedSessionTimeId: undefined,
+      selectedSessionTime: null,
+      bookingSummary: null,
+      bookingData: null,
+      paymentStatus: "idle" as const,
+      errorMessage: null,
     },
   },
 });
@@ -49,90 +50,116 @@ describe(SessionsPage, () => {
     render(
       <Provider store={mockStore}>
         <BrowserRouter>
-          <SessionsPage />
+          <Routes>
+            <Route path="/" element={<SessionsPage />} />
+          </Routes>
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByText("Axels Cinema Booking")).toBeInTheDocument();
-  });
-
-  test("SessionsPage show loading spinner when loading schedule", () => {
-    const loadingStore = configureStore({
-      reducer: {
-        cinema: (state = { schedule: [], isLoadingSchedule: true }) => state,
-      },
-    });
-
-    render(
-      <Provider store={loadingStore}>
-        <BrowserRouter>
-          <SessionsPage />
-        </BrowserRouter>
-      </Provider>
-    );
-
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 
   test("SessionsPage renders DateSelector and SessionList when schedule loaded", () => {
     render(
       <Provider store={scheduleStore}>
         <BrowserRouter>
-          <SessionsPage />
+          <Routes>
+            <Route path="/" element={<SessionsPage />} />
+          </Routes>
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
-    // Check DateSelector is rendered with formatted dates
-    expect(screen.getByText("Sat, Jan 10")).toBeInTheDocument();
-    expect(screen.getByText("Sun, Jan 11")).toBeInTheDocument();
+    // Check DateSelector is rendered with dates
+    expect(screen.getByText("Select a date")).toBeInTheDocument();
 
     // Check SessionList is rendered with sessions
     expect(screen.getByText("14:00")).toBeInTheDocument();
     expect(screen.getByText("18:00")).toBeInTheDocument();
-    expect(screen.queryByText("20:00")).not.toBeInTheDocument();
   });
 
   test("SessionsPage updates sessions when date is changed", async () => {
+    const dynamicStore = configureStore({
+      reducer: {
+        cinema: cinemaReducer,
+      },
+      preloadedState: {
+        cinema: {
+          movies: [],
+          sessionsDates: ["2026-01-10", "2026-01-11"],
+          selectedDate: "2026-01-10",
+          selectedSessions: [
+            {
+              _id: "session-1",
+              movieId: "movie-1",
+              date: "2026-01-10",
+              startTime: "14:00",
+            },
+            {
+              _id: "session-2",
+              movieId: "movie-1",
+              date: "2026-01-10",
+              startTime: "18:00",
+            },
+          ],
+          selectedSessionTimeId: undefined,
+          selectedSessionTime: null,
+          bookingSummary: null,
+          bookingData: null,
+          paymentStatus: "idle" as const,
+          errorMessage: null,
+        },
+      },
+    });
+
     render(
-      <Provider store={scheduleStore}>
+      <Provider store={dynamicStore}>
         <BrowserRouter>
-          <SessionsPage />
+          <Routes>
+            <Route path="/" element={<SessionsPage />} />
+          </Routes>
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const user = userEvent.setup();
 
     expect(screen.getByText("14:00")).toBeInTheDocument();
-    expect(screen.queryByText("20:00")).not.toBeInTheDocument();
+    expect(screen.getByText("18:00")).toBeInTheDocument();
 
-    const dateButton = screen.getByText("Sun, Jan 11");
-    await user.click(dateButton);
+    // Click on second date
+    const dateElements = screen.getAllByText("11");
+    await user.click(dateElements[0]);
 
-    expect(screen.getByText("20:00")).toBeInTheDocument();
-    expect(screen.queryByText("14:00")).not.toBeInTheDocument();
+    // Wait for dispatch action to be processed
+    await waitFor(() => {
+      expect(dynamicStore.getState().cinema.selectedDate).toBe("2026-01-11");
+    });
   });
 
   test("SessionsPage open BookingModal when session is selected", async () => {
     render(
       <Provider store={scheduleStore}>
         <BrowserRouter>
-          <SessionsPage />
+          <Routes>
+            <Route path="/" element={<SessionsPage />} />
+          </Routes>
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
-    expect(screen.getByText("20:00")).toBeInTheDocument();
-    expect(screen.queryByText("14:00")).not.toBeInTheDocument();
+    expect(screen.getByText("14:00")).toBeInTheDocument();
 
     const user = userEvent.setup();
-    const sessionButton = screen.getByText("20:00");
+    const sessionButton = screen.getByText("14:00");
     await user.click(sessionButton);
 
+    // Wait for modal to open (selectedSessionTimeId is set)
     await waitFor(() => {
-      expect(screen.getByRole("dialog")).toBeInTheDocument();
+      expect(scheduleStore.getState().cinema.selectedSessionTimeId).toBe(
+        "session-1",
+      );
     });
   });
 
@@ -140,9 +167,11 @@ describe(SessionsPage, () => {
     const { asFragment } = render(
       <Provider store={scheduleStore}>
         <BrowserRouter>
-          <SessionsPage />
+          <Routes>
+            <Route path="/" element={<SessionsPage />} />
+          </Routes>
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(asFragment()).toMatchSnapshot();

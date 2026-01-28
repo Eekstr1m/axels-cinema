@@ -6,9 +6,36 @@ import { BrowserRouter } from "react-router";
 import cinemaReducer from "../redux/cinemaSlice";
 import PaymentForm from "./PaymentForm";
 
+const mockBookingSummary = {
+  sessionId: "1",
+  movieId: "1",
+  movieTitle: "Test Movie",
+  date: "2025-12-25",
+  time: "19:00",
+  bookedSeats: [
+    { row: 1, number: 1 },
+    { row: 1, number: 2 },
+  ],
+  pricePerSeat: 10,
+  totalPrice: 20,
+};
+
 const mockStore = configureStore({
   reducer: {
     cinema: cinemaReducer,
+  },
+  preloadedState: {
+    cinema: {
+      movies: [],
+      sessionsDates: [],
+      selectedDate: "",
+      selectedSessions: null,
+      selectedSessionTime: null,
+      bookingSummary: mockBookingSummary,
+      bookingData: null,
+      paymentStatus: "idle" as const,
+      errorMessage: null,
+    },
   },
 });
 
@@ -19,10 +46,10 @@ describe(PaymentForm, () => {
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
-    expect(screen.getByText("Personal Information")).toBeInTheDocument();
+    expect(screen.getByText(/Personal Information/)).toBeInTheDocument();
     expect(screen.getByLabelText("Full Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Phone Number")).toBeInTheDocument();
@@ -34,7 +61,7 @@ describe(PaymentForm, () => {
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByText("Payment Information")).toBeInTheDocument();
@@ -49,11 +76,11 @@ describe(PaymentForm, () => {
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(
-      screen.getByRole("button", { name: /confirm payment/i })
+      screen.getByRole("button", { name: /confirm payment/i }),
     ).toBeInTheDocument();
   });
 
@@ -63,7 +90,7 @@ describe(PaymentForm, () => {
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const submitButton = screen.getByRole("button", {
@@ -82,7 +109,7 @@ describe(PaymentForm, () => {
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const user = userEvent.setup();
@@ -92,13 +119,13 @@ describe(PaymentForm, () => {
     // Trigger onBlur validation mode
     await user.tab();
     expect(
-      await screen.findByText("Full Name must be at least 2 characters")
+      await screen.findByText("Full Name must be at least 2 characters"),
     ).toBeInTheDocument();
 
     await user.type(fullNameInput, "1");
     await user.tab();
     expect(
-      await screen.findByText("Full Name can only contain letters")
+      await screen.findByText("Full Name can only contain letters"),
     ).toBeInTheDocument();
 
     const emailInput = screen.getByLabelText("Email");
@@ -115,7 +142,7 @@ describe(PaymentForm, () => {
     await user.type(cardNumberInput, "1234");
     await user.tab();
     expect(
-      await screen.findByText("Card Number must be 13 to 19 digits")
+      await screen.findByText("Card Number must be 13 to 19 digits"),
     ).toBeInTheDocument();
     await user.clear(cardNumberInput);
 
@@ -127,7 +154,7 @@ describe(PaymentForm, () => {
     await user.type(expiryDateInput, "1325");
     await user.tab();
     expect(
-      await screen.findByText("Expiry Date must be in MM/YY format")
+      await screen.findByText("Expiry Date must be in MM/YY format"),
     ).toBeInTheDocument();
     await user.clear(expiryDateInput);
 
@@ -139,7 +166,7 @@ describe(PaymentForm, () => {
     await user.type(cvvInput, "1");
     await user.tab();
     expect(
-      await screen.findByText("CVV must be 3 or 4 digits")
+      await screen.findByText("CVV must be 3 or 4 digits"),
     ).toBeInTheDocument();
   });
 
@@ -147,6 +174,19 @@ describe(PaymentForm, () => {
     const store = configureStore({
       reducer: {
         cinema: cinemaReducer,
+      },
+      preloadedState: {
+        cinema: {
+          movies: [],
+          sessionsDates: [],
+          selectedDate: "",
+          selectedSessions: null,
+          selectedSessionTime: null,
+          bookingSummary: mockBookingSummary,
+          bookingData: null,
+          paymentStatus: "idle" as const,
+          errorMessage: null,
+        },
       },
     });
 
@@ -157,7 +197,7 @@ describe(PaymentForm, () => {
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     const user = userEvent.setup();
@@ -181,39 +221,51 @@ describe(PaymentForm, () => {
     expect(screen.queryByText(/can only contain/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/invalid/i)).not.toBeInTheDocument();
 
-    // Verify that dispatch was called with processPayment action
+    // Verify that dispatch was called with setBookingData and sendBookingData actions
     expect(dispatchSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: "cinema/processPayment",
+        type: "cinema/setBookingData",
         payload: expect.objectContaining({
           fullName: "John Doe",
           email: "john.doe@example.com",
           phone: "+1234567890",
-          cardNumber: "4532 0151 1283 0366",
-          expiryDate: "12/30",
-          cvv: "123",
         }),
-      })
+      }),
     );
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "cinema/sendBookingData",
+      }),
+    );
+
+    expect(dispatchSpy).toHaveBeenCalledTimes(2);
 
     dispatchSpy.mockRestore();
   });
 
-  test('PaymentForm shows success message after successful payment', async () => {
+  test("PaymentForm shows success message after successful payment", async () => {
     const successStore = configureStore({
-        reducer: {
-            cinema: (state = { isPaymentSuccessful: true }) => state
-        }
-    })
+      reducer: {
+        cinema: (
+          state = {
+            bookingSummary: mockBookingSummary,
+            paymentStatus: "successful" as const,
+          },
+        ) => state,
+      },
+    });
 
-    render(<Provider store={successStore}>
+    render(
+      <Provider store={successStore}>
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-    </Provider>)
-  })
+      </Provider>,
+    );
+
+    expect(screen.getByText("Payment Successful!")).toBeInTheDocument();
+  });
 
   test("PaymentForm matches snapshot", () => {
     const { asFragment } = render(
@@ -221,7 +273,7 @@ describe(PaymentForm, () => {
         <BrowserRouter>
           <PaymentForm />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(asFragment()).toMatchSnapshot();

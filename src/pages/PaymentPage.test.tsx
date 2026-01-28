@@ -11,21 +11,36 @@ const emptyStore = configureStore({
   },
 });
 
+const mockBookingSummary = {
+  sessionId: "session-1",
+  movieId: "movie-1",
+  movieTitle: "Test Movie",
+  date: "2025-12-25",
+  time: "14:00",
+  bookedSeats: [
+    { row: 1, number: 1 },
+    { row: 1, number: 2 },
+  ],
+  pricePerSeat: 10,
+  totalPrice: 20,
+};
+
 const bookingStore = configureStore({
   reducer: {
-    cinema: (
-      state = {
-        bookedTicket: {
-          sessionId: "session-1",
-          date: "2026-01-05",
-          time: "14:00",
-          seats: [
-            { row: 1, number: 5 },
-            { row: 1, number: 6 },
-          ],
-        },
-      }
-    ) => state,
+    cinema: cinemaReducer,
+  },
+  preloadedState: {
+    cinema: {
+      movies: [],
+      sessionsDates: [],
+      selectedDate: "",
+      selectedSessions: null,
+      selectedSessionTime: null,
+      bookingSummary: mockBookingSummary,
+      bookingData: null,
+      paymentStatus: "idle" as const,
+      errorMessage: null,
+    },
   },
 });
 
@@ -36,12 +51,10 @@ describe(PaymentPage, () => {
         <BrowserRouter>
           <PaymentPage />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
-    expect(
-      screen.getByText("No booking found. Please book tickets first.")
-    ).toBeInTheDocument();
+    expect(screen.getByText("No Tickets Selected")).toBeInTheDocument();
   });
 
   test("PaymentPage renders with booking data and display all sections", () => {
@@ -50,7 +63,7 @@ describe(PaymentPage, () => {
         <BrowserRouter>
           <PaymentPage />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByText("Payment Confirmation")).toBeInTheDocument();
@@ -63,17 +76,18 @@ describe(PaymentPage, () => {
         <BrowserRouter>
           <PaymentPage />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByText("Movie:")).toBeInTheDocument();
-    expect(screen.getByText("session-1")).toBeInTheDocument();
+    expect(screen.getByText("Test Movie")).toBeInTheDocument();
     expect(screen.getByText("Date:")).toBeInTheDocument();
-    expect(screen.getByText("2026-01-05")).toBeInTheDocument();
+    expect(screen.getByText("2025-12-25")).toBeInTheDocument();
     expect(screen.getByText("Time:")).toBeInTheDocument();
     expect(screen.getByText("14:00")).toBeInTheDocument();
     expect(screen.getByText("Seats:")).toBeInTheDocument();
-    expect(screen.getByText("Row 1 Seat 5, Row 1 Seat 6")).toBeInTheDocument();
+    expect(screen.getByText("Row 1, Seat 1")).toBeInTheDocument();
+    expect(screen.getByText("Row 1, Seat 2")).toBeInTheDocument();
     expect(screen.getByText("Total Price:")).toBeInTheDocument();
   });
 
@@ -83,7 +97,7 @@ describe(PaymentPage, () => {
         <BrowserRouter>
           <PaymentPage />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByText("Personal Information")).toBeInTheDocument();
@@ -97,7 +111,7 @@ describe(PaymentPage, () => {
         <BrowserRouter>
           <PaymentPage />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
     expect(asFragment()).toMatchSnapshot();

@@ -41,5 +41,5 @@ export const formatReleaseDate = (date: Date | string): string => {
 export const formatDuration = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return `${hours}г ${mins}м`;
+  return `${hours}h ${mins}m`;
 };

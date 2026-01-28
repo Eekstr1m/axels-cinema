@@ -1,0 +1,253 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`MoviesPage MoviesPage matches snapshot when no movies 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-1gem9at"
+  >
+    <svg
+      aria-hidden="true"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+      data-testid="MovieCreationIcon"
+      focusable="false"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="m18 4 2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4z"
+      />
+    </svg>
+    <h5
+      class="MuiTypography-root MuiTypography-h5 css-kwxs7k-MuiTypography-root"
+    >
+      No movies found
+    </h5>
+    <p
+      class="MuiTypography-root MuiTypography-body2 css-1a1whku-MuiTypography-root"
+    >
+      Please try again later
+    </p>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`MoviesPage MoviesPage matches snapshot with movies 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiContainer-root MuiContainer-maxWidthLg css-18v5ine-MuiContainer-root"
+  >
+    <div
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-1if9ram-MuiPaper-root"
+      style="--Paper-shadow: none;"
+    >
+      <div
+        class="MuiBox-root css-7og2sn"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-dskzcr-MuiSvgIcon-root"
+          data-testid="LocalMoviesIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3zM8 17H6v-2h2zm0-4H6v-2h2zm0-4H6V7h2zm10 8h-2v-2h2zm0-4h-2v-2h2zm0-4h-2V7h2z"
+          />
+        </svg>
+        <h4
+          class="MuiTypography-root MuiTypography-h4 css-16rlh98-MuiTypography-root"
+        >
+          Axels Cinema
+        </h4>
+      </div>
+    </div>
+    <div
+      class="MuiBox-root css-1nbwgp4"
+    >
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-tyjam7-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+      >
+        <div
+          class="MuiBox-root css-1il8f33"
+        >
+          <img
+            alt="Test Movie 1"
+            loading="lazy"
+            src="https://example.com/poster1.jpg"
+          />
+        </div>
+        <div
+          class="MuiBox-root css-pxiiiv"
+        >
+          <h6
+            class="MuiTypography-root MuiTypography-h6 css-1wjnb0x-MuiTypography-root"
+          >
+            Test Movie 1
+          </h6>
+          <div
+            class="MuiBox-root css-1c5pmus"
+          >
+            <div
+              class="MuiBox-root css-18tgplj"
+            >
+              Action
+            </div>
+            <div
+              class="MuiBox-root css-18tgplj"
+            >
+              Adventure
+            </div>
+          </div>
+          <p
+            class="MuiTypography-root MuiTypography-body2 css-sh7pjb-MuiTypography-root"
+          >
+            This is a test movie description for the first movie.
+          </p>
+          <div
+            class="MuiBox-root css-12njm95"
+          >
+            <div
+              class="MuiBox-root css-1bljpjc"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                data-testid="AccessTimeIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8"
+                />
+                <path
+                  d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+                />
+              </svg>
+              <span>
+                2h 0m
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1bljpjc"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                data-testid="CalendarTodayIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 18H4V8h16z"
+                />
+              </svg>
+              <span>
+                December 25, 2025
+              </span>
+            </div>
+          </div>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-aet0ji-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            Available Sessions
+          </button>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-tyjam7-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+      >
+        <div
+          class="MuiBox-root css-1il8f33"
+        >
+          <img
+            alt="Test Movie 2"
+            loading="lazy"
+            src="https://example.com/poster2.jpg"
+          />
+        </div>
+        <div
+          class="MuiBox-root css-pxiiiv"
+        >
+          <h6
+            class="MuiTypography-root MuiTypography-h6 css-1wjnb0x-MuiTypography-root"
+          >
+            Test Movie 2
+          </h6>
+          <div
+            class="MuiBox-root css-1c5pmus"
+          >
+            <div
+              class="MuiBox-root css-18tgplj"
+            >
+              Comedy
+            </div>
+            <div
+              class="MuiBox-root css-18tgplj"
+            >
+              Drama
+            </div>
+          </div>
+          <p
+            class="MuiTypography-root MuiTypography-body2 css-sh7pjb-MuiTypography-root"
+          >
+            This is a test movie description for the second movie
+          </p>
+          <div
+            class="MuiBox-root css-12njm95"
+          >
+            <div
+              class="MuiBox-root css-1bljpjc"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                data-testid="AccessTimeIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8"
+                />
+                <path
+                  d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+                />
+              </svg>
+              <span>
+                1h 35m
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1bljpjc"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                data-testid="CalendarTodayIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 18H4V8h16z"
+                />
+              </svg>
+              <span>
+                January 15, 2026
+              </span>
+            </div>
+          </div>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-aet0ji-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            Available Sessions
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

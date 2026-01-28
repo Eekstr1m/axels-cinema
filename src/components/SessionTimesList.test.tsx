@@ -1,51 +1,67 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import SessionList from "./SessionList";
-import type { SessionListItem } from "../types";
+import SessionTimesList from "./SessionTimesList";
+import type { Session } from "../interfaces/sessions.interface";
 
-const mockSessions: SessionListItem[] = [
+const mockSessions: Session[] = [
   {
-    id: "session-2025-12-25-0",
-    time: "10:00",
+    _id: "session-2025-12-25-0",
+    movieId: "movie-1",
+    date: "2025-12-25",
+    startTime: "10:00",
   },
   {
-    id: "session-2025-12-25-1",
-    time: "12:00",
+    _id: "session-2025-12-25-1",
+    movieId: "movie-1",
+    date: "2025-12-25",
+    startTime: "12:00",
   },
   {
-    id: "session-2025-12-25-2",
-    time: "14:00",
+    _id: "session-2025-12-25-2",
+    movieId: "movie-1",
+    date: "2025-12-25",
+    startTime: "14:00",
   },
 ];
 
-describe(SessionList, () => {
+describe(SessionTimesList, () => {
   const onSessionSelect = jest.fn();
 
   beforeEach(() => {
     onSessionSelect.mockClear();
   });
 
-  test("SessionList renders", () => {
+  test("SessionTimesList renders", () => {
     render(
-      <SessionList sessions={mockSessions} onSessionSelect={onSessionSelect} />
+      <SessionTimesList
+        sessions={mockSessions}
+        onSessionSelect={onSessionSelect}
+      />,
     );
 
     expect(screen.getByText("Select a session time")).toBeInTheDocument();
   });
 
-  test("SessionList renders with empty sessions", () => {
-    render(<SessionList sessions={[]} onSessionSelect={onSessionSelect} />);
-    expect(screen.getByText("Select a session time")).toBeInTheDocument();
+  test("SessionTimesList not renders with empty sessions", () => {
+    render(
+      <SessionTimesList sessions={[]} onSessionSelect={onSessionSelect} />,
+    );
+    expect(screen.queryByText("Select a session time")).not.toBeInTheDocument();
   });
 
-  test("SessionList renders no session times when sessions is empty", () => {
-    render(<SessionList sessions={[]} onSessionSelect={onSessionSelect} />);
+  test("SessionTimesList renders no session times when sessions is empty", () => {
+    render(
+      <SessionTimesList sessions={[]} onSessionSelect={onSessionSelect} />,
+    );
     expect(screen.queryByText(/^\d{2}:\d{2}$/)).not.toBeInTheDocument();
   });
 
-  test("SessionList renders all session times", () => {
+  test("SessionTimesList renders all session times", () => {
     render(
-      <SessionList sessions={mockSessions} onSessionSelect={onSessionSelect} />
+      <SessionTimesList
+        sessions={mockSessions}
+        onSessionSelect={onSessionSelect}
+      />,
     );
 
     expect(screen.getByText("10:00")).toBeInTheDocument();
@@ -55,17 +71,23 @@ describe(SessionList, () => {
 
   test("Render correct number of session cards", () => {
     render(
-      <SessionList sessions={mockSessions} onSessionSelect={onSessionSelect} />
+      <SessionTimesList
+        sessions={mockSessions}
+        onSessionSelect={onSessionSelect}
+      />,
     );
 
     expect(screen.getAllByText(/^\d{2}:\d{2}$/)).toHaveLength(
-      mockSessions.length
+      mockSessions.length,
     );
   });
 
   test("Clicking on a session time calls onSessionSelect with correct id", async () => {
     render(
-      <SessionList sessions={mockSessions} onSessionSelect={onSessionSelect} />
+      <SessionTimesList
+        sessions={mockSessions}
+        onSessionSelect={onSessionSelect}
+      />,
     );
     const user = userEvent.setup();
 
@@ -76,7 +98,10 @@ describe(SessionList, () => {
 
   test("Clicking on multiple session times calls onSessionSelect correct number of times", async () => {
     render(
-      <SessionList sessions={mockSessions} onSessionSelect={onSessionSelect} />
+      <SessionTimesList
+        sessions={mockSessions}
+        onSessionSelect={onSessionSelect}
+      />,
     );
     const user = userEvent.setup();
     await user.click(screen.getByText("10:00"));
@@ -86,9 +111,12 @@ describe(SessionList, () => {
     expect(onSessionSelect).toHaveBeenCalledTimes(2);
   });
 
-  test("SessionList matches snapshot", () => {
+  test("SessionTimesList matches snapshot", () => {
     const { asFragment } = render(
-      <SessionList sessions={mockSessions} onSessionSelect={onSessionSelect} />
+      <SessionTimesList
+        sessions={mockSessions}
+        onSessionSelect={onSessionSelect}
+      />,
     );
     expect(asFragment()).toMatchSnapshot();
   });

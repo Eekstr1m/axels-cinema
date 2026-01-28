@@ -1,33 +1,67 @@
 import cinemaReducer, {
-  bookSeatsSuccess,
-  clearSelectedSession,
-  initializeSchedule,
-  loadSessionDetails,
-  processPayment,
-  processPaymentSuccess,
+  initializeMovies,
+  setMovies,
+  loadMovieSessionsDates,
+  setMovieSessionsDates,
+  setSelectedDate,
+  loadSelectedSessions,
+  setSelectedSessions,
+  setSelectedSessionTimeId,
+  loadSelectedSessionTime,
+  setSelectedSessionTime,
+  setBookingSummary,
+  setBookingData,
+  sendBookingData,
+  setPaymentStatus,
+  setErrorMessage,
   resetPaymentState,
-  selectDate,
-  selectSession,
-  setErrorState,
-  setSchedule,
-  setSessionDetails,
 } from "./cinemaSlice";
 
+import type { Movie } from "../interfaces/movies.interface";
 import type {
-  BookedTicket,
-  Booking,
-  DaySchedule,
-  PaymentFormData,
-  SessionDetails,
-} from "../types";
+  Session,
+  DetailedSession,
+} from "../interfaces/sessions.interface";
+import type {
+  BookingSummary,
+  BookingData,
+} from "../interfaces/booking.interface";
 
-const mockSessionDetails: SessionDetails = {
-  sessionId: "session-1",
+const mockMovie: Movie = {
+  _id: "1",
+  title: "Test Movie",
+  description: "Test Description",
+  posterUrl: "https://example.com/poster.jpg",
+  duration: 120,
+  genres: ["Action"],
+  releaseDate: new Date("2025-12-25"),
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+const mockSessions: Session[] = [
+  {
+    _id: "session-1",
+    movieId: "movie-1",
+    date: "2026-01-10",
+    startTime: "14:00",
+  },
+  {
+    _id: "session-2",
+    movieId: "movie-1",
+    date: "2026-01-10",
+    startTime: "18:00",
+  },
+];
+
+const mockDetailedSession: DetailedSession = {
+  _id: "session-1",
   date: "2026-01-10",
-  time: "12:00",
-  totalSeats: 8,
-  bookedSeats: 2,
-  availableSeats: 6,
+  startTime: "12:00",
+  movieId: {
+    _id: "movie-1",
+    title: "Test Movie",
+  },
   seats: [
     [
       { row: 1, number: 1, isBooked: false },
@@ -42,216 +76,238 @@ const mockSessionDetails: SessionDetails = {
       { row: 2, number: 4, isBooked: false },
     ],
   ],
+  price: 10,
+};
+
+const initialState = {
+  movies: [],
+  sessionsDates: [],
+  selectedDate: "",
+  selectedSessions: null,
+  selectedSessionTimeId: undefined,
+  selectedSessionTime: null,
+  bookingSummary: null,
+  bookingData: null,
+  paymentStatus: "idle" as const,
+  errorMessage: null,
+};
+
+const mockBookingData: BookingData = {
+  sessionId: "session-1",
+  movieId: "movie-1",
+  date: "2026-01-10",
+  time: "14:00",
+  bookedSeats: [
+    { row: 1, number: 1 },
+    { row: 1, number: 2 },
+  ],
+  pricePerSeat: 10,
+  totalPrice: 20,
+  fullName: "John Doe",
+  email: "john.doe@example.com",
+  phone: "+1234567890",
+};
+
+const mockBookingSummary: BookingSummary = {
+  sessionId: "session-1",
+  movieId: "movie-1",
+  movieTitle: "Test Movie",
+  date: "2026-01-10",
+  time: "14:00",
+  bookedSeats: [
+    { row: 1, number: 1 },
+    { row: 1, number: 2 },
+  ],
+  pricePerSeat: 10,
+  totalPrice: 20,
 };
 
 describe("cinemaSlice", () => {
-  const initialState = {
-    schedule: [],
-    sessionDetails: {} as SessionDetails,
-    selectedDate: "",
-    selectedSessionId: null,
-    isLoadingSchedule: false,
-    isLoadingSession: false,
-    bookedTicket: {} as BookedTicket,
-    isProcessingPayment: false,
-    isError: false,
-  };
-
   test("should return the initial state", () => {
     expect(cinemaReducer(undefined, { type: "unknown" })).toEqual(initialState);
   });
 
-  test("initialize schedule sets loading state to true", () => {
-    const state = cinemaReducer(initialState, initializeSchedule());
-    expect(state.isLoadingSchedule).toBe(true);
+  test("initializeMovies action is handled by saga", () => {
+    const state = cinemaReducer(initialState, initializeMovies());
+    expect(state).toEqual(initialState);
   });
 
-  test("setSchedule sets schedule and loading to false", () => {
-    const mockSchedule: DaySchedule[] = [
-      {
-        date: "2026-01-10",
-        sessions: [
-          { id: "session-1", time: "14:00" },
-          { id: "session-2", time: "16:00" },
-        ],
-      },
-    ];
-    const previousState = {
-      ...initialState,
-      isLoadingSchedule: true,
-    };
+  test("setMovies sets movies in state", () => {
+    const movies = [mockMovie];
+    const state = cinemaReducer(initialState, setMovies(movies));
 
-    const state = cinemaReducer(previousState, setSchedule(mockSchedule));
-
-    expect(state.schedule).toEqual(mockSchedule);
-    expect(state.isLoadingSchedule).toBe(false);
-    expect(state.isError).toBe(false);
+    expect(state.movies).toEqual(movies);
   });
 
-  test("selectDate sets the selected date", () => {
-    const state = cinemaReducer(initialState, selectDate("2026-01-10"));
+  test("loadMovieSessionsDates action is handled by saga", () => {
+    const state = cinemaReducer(
+      initialState,
+      loadMovieSessionsDates("movie-1"),
+    );
+
+    expect(state).toEqual(initialState);
+  });
+
+  test("setMovieSessionsDates sets sessionsDates in state", () => {
+    const dates = ["2026-01-10", "2026-01-11", "2026-01-12"];
+    const state = cinemaReducer(initialState, setMovieSessionsDates(dates));
+
+    expect(state.sessionsDates).toEqual(dates);
+  });
+
+  test("setSelectedDate sets the selected date", () => {
+    const state = cinemaReducer(initialState, setSelectedDate("2026-01-10"));
     expect(state.selectedDate).toBe("2026-01-10");
   });
 
-  test("loadSessionsDetails sets loading state to true", () => {
-    const state = cinemaReducer(initialState, loadSessionDetails());
-    expect(state.isLoadingSession).toBe(true);
-  });
-
-  test("setSessionDetails sets session details and loading to false", () => {
-    const previousState = {
-      ...initialState,
-      isLoadingSession: true,
-    };
-
+  test("loadSelectedSessions action is handled by saga", () => {
     const state = cinemaReducer(
-      previousState,
-      setSessionDetails(mockSessionDetails)
+      initialState,
+      loadSelectedSessions({ movieId: "movie-1", date: "2026-01-10" }),
     );
-    expect(state.sessionDetails).toEqual(mockSessionDetails);
-    expect(state.isLoadingSession).toBe(false);
-    expect(state.isError).toBe(false);
+
+    expect(state).toEqual(initialState);
   });
 
-  test("selectSession sets the selected session id", () => {
-    const state = cinemaReducer(initialState, selectSession("session-1"));
-    expect(state.selectedSessionId).toBe("session-1");
+  test("setSelectedSessions sets selected sessions in state", () => {
+    const state = cinemaReducer(
+      initialState,
+      setSelectedSessions(mockSessions),
+    );
+
+    expect(state.selectedSessions).toEqual(mockSessions);
   });
 
-  test("clearSelectedSession clears selected session id", () => {
+  test("setSelectedSessionTimeId sets selected session time id", () => {
+    const state = cinemaReducer(
+      initialState,
+      setSelectedSessionTimeId("session-1"),
+    );
+
+    expect(state.selectedSessionTimeId).toBe("session-1");
+  });
+
+  test("loadSelectedSessionTime action is handled by saga", () => {
+    const state = cinemaReducer(
+      initialState,
+      loadSelectedSessionTime("session-1"),
+    );
+
+    expect(state).toEqual(initialState);
+  });
+
+  test("setSelectedSessionTime sets selected session time details", () => {
+    const state = cinemaReducer(
+      initialState,
+      setSelectedSessionTime(mockDetailedSession),
+    );
+
+    expect(state.selectedSessionTime).toEqual(mockDetailedSession);
+  });
+
+  test("setSelectedSessionTime can set to null", () => {
     const previousState = {
       ...initialState,
-      selectedSessionId: "session-1",
+      selectedSessionTime: mockDetailedSession,
     };
-    const state = cinemaReducer(previousState, clearSelectedSession());
-    expect(state.selectedSessionId).toBeNull();
+
+    const state = cinemaReducer(previousState, setSelectedSessionTime(null));
+    expect(state.selectedSessionTime).toBeNull();
   });
 
-  test("bookSeatsSuccess updates booking seats and booking info", () => {
+  test("setBookingSummary sets booking summary", () => {
+    const state = cinemaReducer(
+      initialState,
+      setBookingSummary(mockBookingSummary),
+    );
+    expect(state.bookingSummary).toEqual(mockBookingSummary);
+  });
+
+  test("setBookingSummary can set to null", () => {
     const previousState = {
       ...initialState,
-      sessionDetails: mockSessionDetails,
-      selectedSessionId: "session-1",
+      bookingSummary: mockBookingSummary,
     };
 
-    const mockBooking: Booking = {
-      sessionId: "session-1",
-      date: "2026-01-10",
-      seats: [
-        { row: 1, number: 2 },
-        { row: 2, number: 3 },
-      ],
-    };
-    const state = cinemaReducer(previousState, bookSeatsSuccess(mockBooking));
-
-    expect(state.sessionDetails.seats[0][1].isBooked).toBe(true); // row 1, number 2
-    expect(state.sessionDetails.seats[1][2].isBooked).toBe(true); // row 2, number 3
-
-    expect(state.sessionDetails.bookedSeats).toBe(4);
-    expect(state.sessionDetails.availableSeats).toBe(4);
-
-    expect(state.bookedTicket).toEqual({
-      sessionId: "session-1",
-      date: "2026-01-10",
-      time: "12:00",
-      seats: [
-        { row: 1, number: 2 },
-        { row: 2, number: 3 },
-      ],
-    });
-
-    expect(state.selectedSessionId).toBeNull();
+    const state = cinemaReducer(previousState, setBookingSummary(null));
+    expect(state.bookingSummary).toBeNull();
   });
 
-  test("bookSeatsSuccess does not update seats if sessionDetails is null", () => {
+  test("setBookingData sets booking data", () => {
+    const state = cinemaReducer(initialState, setBookingData(mockBookingData));
+    expect(state.bookingData).toEqual(mockBookingData);
+  });
+
+  test("setBookingData can set to null", () => {
     const previousState = {
       ...initialState,
-      sessionDetails: {} as SessionDetails,
-      selectedSessionId: "session-1",
+      bookingData: mockBookingData,
     };
-    const mockBooking: Booking = {
-      sessionId: "session-1",
-      date: "2026-01-10",
-      seats: [
-        { row: 1, number: 2 },
-        { row: 2, number: 3 },
-      ],
-    };
-    const state = cinemaReducer(previousState, bookSeatsSuccess(mockBooking));
 
-    expect(state.sessionDetails).toEqual({} as SessionDetails);
-    expect(state.bookedTicket).toEqual({} as BookedTicket);
-    expect(state.selectedSessionId).toBeNull();
+    const state = cinemaReducer(previousState, setBookingData(null));
+    expect(state.bookingData).toBeNull();
   });
 
-  test("processPayment sets processing state to true", () => {
-    const mockPaymentData: PaymentFormData = {
-      fullName: "John Doe",
-      email: "john.doe@example.com",
-      phone: "+1234567890",
-      cardNumber: "4532 0151 1283 0366",
-      expiryDate: "12/30",
-      cvv: "123",
-    };
-
-    const state = cinemaReducer(initialState, processPayment(mockPaymentData));
-
-    expect(state.isProcessingPayment).toBe(true);
-    expect(state.isPaymentSuccessful).toBe(false);
+  test("sendBookingData action is handled by saga", () => {
+    const state = cinemaReducer(initialState, sendBookingData(mockBookingData));
+    expect(state).toEqual(initialState);
   });
 
-  test("processPaymentSuccess updates payment state", () => {
+  test("setPaymentStatus sets payment status", () => {
+    const state = cinemaReducer(initialState, setPaymentStatus("processing"));
+    expect(state.paymentStatus).toBe("processing");
+  });
+
+  test("setPaymentStatus can set to successful", () => {
     const previousState = {
       ...initialState,
-      isProcessingPayment: true,
-      isPaymentSuccessful: false,
+      paymentStatus: "processing" as const,
     };
 
-    const state = cinemaReducer(previousState, processPaymentSuccess());
+    const state = cinemaReducer(previousState, setPaymentStatus("successful"));
+    expect(state.paymentStatus).toBe("successful");
+  });
 
-    expect(state.isProcessingPayment).toBe(false);
-    expect(state.isPaymentSuccessful).toBe(true);
-    expect(state.isError).toBe(false);
+  test("setPaymentStatus can set to failed", () => {
+    const previousState = {
+      ...initialState,
+      paymentStatus: "processing" as const,
+    };
+
+    const state = cinemaReducer(previousState, setPaymentStatus("failed"));
+    expect(state.paymentStatus).toBe("failed");
+  });
+
+  test("setErrorMessage sets error message", () => {
+    const errorMessage = "Failed to load movies";
+
+    const state = cinemaReducer(initialState, setErrorMessage(errorMessage));
+    expect(state.errorMessage).toBe(errorMessage);
+  });
+
+  test("setErrorMessage can clear error message", () => {
+    const previousState = {
+      ...initialState,
+      errorMessage: "Some error",
+    };
+
+    const state = cinemaReducer(previousState, setErrorMessage(null));
+    expect(state.errorMessage).toBeNull();
   });
 
   test("resetPaymentState clears payment and booking data", () => {
     const previousState = {
       ...initialState,
-      isProcessingPayment: true,
-      isPaymentSuccessful: true,
-      bookedTicket: {
-        sessionId: "session-1",
-        date: "2026-01-10",
-        time: "12:00",
-        seats: [{ row: 1, number: 2 }],
-      },
+      bookingSummary: mockBookingSummary,
+      bookingData: mockBookingData,
+      paymentStatus: "successful" as const,
+      errorMessage: "Some error",
     };
 
     const state = cinemaReducer(previousState, resetPaymentState());
-
-    expect(state.isProcessingPayment).toBe(false);
-    expect(state.isPaymentSuccessful).toBe(false);
-    expect(state.bookedTicket).toEqual({} as BookedTicket);
-  });
-
-  test("setError sets error state and message", () => {
-    const errorMessage = "Failed to load schedule";
-    const state = cinemaReducer(initialState, setErrorState(errorMessage));
-
-    expect(state.isError).toBe(true);
-    expect(state.errorMessage).toBe(errorMessage);
-  });
-
-  test("setError sets error state during schedule loading", () => {
-    const previousState = {
-      ...initialState,
-      isLoadingSchedule: true,
-    };
-    const errorMessage = "Failed to load schedule";
-    const state = cinemaReducer(previousState, setErrorState(errorMessage));
-
-    expect(state.isError).toBe(true);
-    expect(state.errorMessage).toBe(errorMessage);
-    expect(state.isLoadingSchedule).toBe(false);
+    expect(state.bookingData).toBeNull();
+    expect(state.bookingSummary).toBeNull();
+    expect(state.paymentStatus).toBe("idle");
+    expect(state.errorMessage).toBeNull();
   });
 });

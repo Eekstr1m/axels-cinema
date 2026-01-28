@@ -5,46 +5,88 @@ exports[`DateSelector DateSelector matches snapshot 1`] = `
   <div
     class="MuiBox-root css-r32ezy"
   >
-    <h4
-      class="MuiTypography-root MuiTypography-h4 css-1b3xv62-MuiTypography-root"
-    >
-      Select a date
-    </h4>
     <div
-      class="MuiGrid-root MuiGrid-container MuiGrid-direction-xs-row MuiGrid-spacing-xs-2 css-vs0dty-MuiGrid-root"
+      class="MuiBox-root css-1hls2az"
+    >
+      <svg
+        aria-hidden="true"
+        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+        data-testid="EventIcon"
+        focusable="false"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M17 12h-5v5h5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1zm3 18H5V8h14z"
+        />
+      </svg>
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-nik9z3-MuiTypography-root"
+      >
+        Select a date
+      </p>
+    </div>
+    <div
+      class="MuiBox-root css-j1t9cb"
     >
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorPrimary MuiChip-clickable MuiChip-clickableColorPrimary MuiChip-filledPrimary css-ef1zlr-MuiButtonBase-root-MuiChip-root"
-        role="button"
-        tabindex="0"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 css-1bky93q-MuiPaper-root"
+        style="--Paper-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);"
       >
-        <span
-          class="MuiChip-label MuiChip-labelMedium css-1dybbl5-MuiChip-label"
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-wjy9uy-MuiTypography-root"
         >
-          Thu, Dec 25
-        </span>
+          Thu
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-1g2s6y4-MuiTypography-root"
+        >
+          25
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-w56jqw-MuiTypography-root"
+        >
+          Dec
+        </p>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-1hk5s8o-MuiButtonBase-root-MuiChip-root"
-        role="button"
-        tabindex="0"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 css-fz9g56-MuiPaper-root"
+        style="--Paper-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);"
       >
-        <span
-          class="MuiChip-label MuiChip-labelMedium css-16cgrcw-MuiChip-label"
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-1buqmg0-MuiTypography-root"
         >
-          Fri, Dec 26
-        </span>
+          Fri
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-4zuuf6-MuiTypography-root"
+        >
+          26
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-10d1e9g-MuiTypography-root"
+        >
+          Dec
+        </p>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-1hk5s8o-MuiButtonBase-root-MuiChip-root"
-        role="button"
-        tabindex="0"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 css-fz9g56-MuiPaper-root"
+        style="--Paper-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);"
       >
-        <span
-          class="MuiChip-label MuiChip-labelMedium css-16cgrcw-MuiChip-label"
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-1buqmg0-MuiTypography-root"
         >
-          Sat, Dec 27
-        </span>
+          Sat
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-4zuuf6-MuiTypography-root"
+        >
+          27
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-10d1e9g-MuiTypography-root"
+        >
+          Dec
+        </p>
       </div>
     </div>
   </div>
