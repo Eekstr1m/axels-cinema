@@ -1,21 +1,53 @@
 import axios, { type AxiosResponse } from "axios";
 
-// Other
-import type { Movie } from "../interfaces/movies.interface";
-import type {
-  Session,
-  DetailedSession,
-} from "../interfaces/sessions.interface";
+// Interfaces
+import type { RefreshTokenResponse } from "../interfaces/auth.interface";
 import type {
   BookingData,
   SavedBookingData,
 } from "../interfaces/booking.interface";
+import type { Movie } from "../interfaces/movies.interface";
+import type {
+  DetailedSession,
+  Session,
+} from "../interfaces/sessions.interface";
+
+// Redux
+import { setCredentials } from "../redux/authSlice";
+import { store } from "../redux/store";
+
+// Interceptors
+import { authInterceptor } from "./api-interceptor";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
 });
+
+authInterceptor(instance);
+
+export const login = async (email: string, password: string) => {
+  const response: AxiosResponse<RefreshTokenResponse> = await instance.post(
+    "/auth/login",
+    { email, password },
+  );
+
+  const { accessToken, id } = response.data;
+  if (accessToken) {
+    store.dispatch(setCredentials({ accessToken, userId: id }));
+  }
+
+  return response.data;
+};
+
+export const refetchToken = async () => {
+  const response: AxiosResponse<RefreshTokenResponse> =
+    await instance.post("/auth/refresh");
+
+  return response.data;
+};
 
 export const fetchMovies = async () => {
   const response: AxiosResponse<Movie[]> = await instance.get("/movies");

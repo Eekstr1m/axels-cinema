@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 // MUI Icons
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
 import MovieCreationIcon from "@mui/icons-material/MovieCreation";
 
 // Styled Components
@@ -15,8 +14,6 @@ import {
   BookingButton,
   EmptyStateBox,
   GenreChip,
-  HeaderBox,
-  HeaderPaper,
   MovieCard,
   MovieContentBox,
   MovieDescriptionText,
@@ -25,15 +22,15 @@ import {
   MovieInfoItem,
   MovieMetaBox,
   MoviesGrid,
-  MovieTitle,
   MovieTitleText,
   PageContainer,
 } from "../styled/pages/MoviesPage.styled";
 
-import { formatReleaseDate, formatDuration } from "../utils/utils";
-import { initializeMovies } from "../redux/cinemaSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Header from "../components/Header";
+import { initializeMovies } from "../redux/cinemaSlice";
 import type { RootState } from "../redux/store";
+import { formatDuration, formatReleaseDate } from "../utils/utils";
 
 export default function MoviesPage() {
   const dispatch = useDispatch();
@@ -68,12 +65,7 @@ export default function MoviesPage() {
   return (
     <PageContainer maxWidth="lg">
       {/* Header */}
-      <HeaderPaper elevation={0}>
-        <HeaderBox>
-          <LocalMoviesIcon sx={{ fontSize: 40 }} />
-          <MovieTitle variant="h4">Axels Cinema</MovieTitle>
-        </HeaderBox>
-      </HeaderPaper>
+      <Header />
 
       {/* Movies Grid */}
       <MoviesGrid>
@@ -87,7 +79,7 @@ export default function MoviesPage() {
                 loading="lazy"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
-                    "https://via.placeholder.com/280x420?text=Poster";
+                    "https://placehold.co/280x420";
                 }}
               />
             </MovieImageContainer>

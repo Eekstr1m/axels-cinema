@@ -94,6 +94,10 @@ const cinemaSlice = createSlice({
       state.errorMessage = action.payload;
     },
     resetPaymentState: (state) => {
+      state.selectedDate = "";
+      state.selectedSessions = null;
+      state.selectedSessionTime = null;
+      state.selectedSessionTimeId = "";
       state.bookingData = null;
       state.bookingSummary = null;
       state.paymentStatus = "idle";

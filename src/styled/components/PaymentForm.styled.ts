@@ -1,9 +1,7 @@
-import { alpha, styled } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import InputAdornment from "@mui/material/InputAdornment";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 export const FormBox = styled("form")(({ theme }) => ({
   display: "flex",
@@ -44,18 +42,6 @@ export const InfoInlineSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const StyledTextField = styled(TextField)(({ theme }) => ({
-  "& .MuiOutlinedInput-root": {
-    transition: "all 0.3s ease",
-    "&:hover": {
-      boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.2)}`,
-    },
-    "&.Mui-focused": {
-      boxShadow: `0 4px 16px ${alpha(theme.palette.primary.main, 0.25)}`,
-    },
-  },
-}));
-
 export const SubmitButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(2),
   padding: theme.spacing(1.5),
@@ -77,8 +63,4 @@ export const SuccessfulBox = styled(Box)(({ theme }) => ({
     fontSize: 80,
     color: theme.palette.primary.main,
   },
-}));
-
-export const ColoredInputAdornment = styled(InputAdornment)(({ theme }) => ({
-  color: theme.palette.primary.light,
 }));

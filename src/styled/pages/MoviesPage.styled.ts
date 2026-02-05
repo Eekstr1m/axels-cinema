@@ -1,38 +1,14 @@
-import { styled, alpha } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
+import { alpha, styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
 import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
 
 export const PageContainer = styled(Container)(({ theme }) => ({
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
 }));
-
-export const HeaderPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  marginBottom: theme.spacing(4),
-  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-  color: "white",
-  borderRadius: theme.spacing(2),
-}));
-
-export const HeaderBox = styled(Box)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: theme.spacing(2),
-
-  svg: {
-    fontSize: 40,
-  },
-}));
-
-export const MovieTitle = styled(Typography)({
-  fontWeight: 700,
-});
 
 export const LoadingBox = styled(Box)({
   display: "flex",

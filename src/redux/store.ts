@@ -3,9 +3,11 @@ import createSagaMiddleware from "redux-saga";
 
 // Reducers
 import cinemaReducer from "./cinemaSlice.ts";
+import authReducer from "./authSlice.ts";
 
 // Sagas
 import { cinemaSaga } from "./cinemaSaga.ts";
+import { authSaga } from "./authSaga.ts";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -13,6 +15,7 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     cinema: cinemaReducer,
+    auth: authReducer,
   },
   // Add saga middleware
   middleware: (getDefaultMiddleware) =>
@@ -21,6 +24,7 @@ export const store = configureStore({
 
 // Run the cinema saga
 sagaMiddleware.run(cinemaSaga);
+sagaMiddleware.run(authSaga);
 
 // Types for RootState and AppDispatch
 export type RootState = ReturnType<typeof store.getState>;

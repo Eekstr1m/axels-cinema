@@ -23,15 +23,14 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 // Styled Components
 import {
-  ColoredInputAdornment,
   FormBox,
   InfoGrid,
   InfoInlineSection,
   SectionHeading,
-  StyledTextField,
   SubmitButton,
   SuccessfulBox,
 } from "../styled/components/PaymentForm.styled";
+import FormTextField from "./common/FormTextField";
 
 // Other
 import { paymentValidationSchema } from "../utils/paymentValidationSchema";
@@ -106,58 +105,34 @@ export default function PaymentForm() {
       </SectionHeading>
 
       <InfoGrid>
-        <StyledTextField
+        <FormTextField<PaymentFormData>
           fullWidth
           label="Full Name"
           placeholder="John Doe"
-          {...register("fullName")}
-          error={!!errors.fullName}
-          helperText={errors.fullName?.message}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <ColoredInputAdornment position="start">
-                  <PersonIcon />
-                </ColoredInputAdornment>
-              ),
-            },
-          }}
+          name="fullName"
+          register={register}
+          errors={errors}
+          icon={<PersonIcon />}
         />
         <InfoInlineSection>
-          <StyledTextField
+          <FormTextField<PaymentFormData>
             fullWidth
             label="Email"
             type="email"
             placeholder="john.doe@example.com"
-            {...register("email")}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <ColoredInputAdornment position="start">
-                    <EmailIcon />
-                  </ColoredInputAdornment>
-                ),
-              },
-            }}
+            name="email"
+            register={register}
+            errors={errors}
+            icon={<EmailIcon />}
           />
-          <StyledTextField
+          <FormTextField<PaymentFormData>
             fullWidth
             label="Phone Number"
             placeholder="+1 234 567 8901"
-            {...register("phone")}
-            error={!!errors.phone}
-            helperText={errors.phone?.message}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <ColoredInputAdornment position="start">
-                    <PhoneIcon />
-                  </ColoredInputAdornment>
-                ),
-              },
-            }}
+            name="phone"
+            register={register}
+            errors={errors}
+            icon={<PhoneIcon />}
           />
         </InfoInlineSection>
       </InfoGrid>
@@ -169,11 +144,13 @@ export default function PaymentForm() {
       </SectionHeading>
 
       <InfoGrid>
-        <StyledTextField
+        <FormTextField<PaymentFormData>
           fullWidth
           label="Card Number"
           placeholder="1234 5678 9012 3456"
-          {...register("cardNumber")}
+          name="cardNumber"
+          register={register}
+          errors={errors}
           onInput={(e) => {
             const target = e.target as HTMLInputElement;
             // Remove all non-numeric characters
@@ -184,25 +161,17 @@ export default function PaymentForm() {
             value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
             target.value = value;
           }}
-          error={!!errors.cardNumber}
-          helperText={errors.cardNumber?.message}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <ColoredInputAdornment position="start">
-                  <CreditCardIcon />
-                </ColoredInputAdornment>
-              ),
-            },
-          }}
+          icon={<CreditCardIcon />}
         />
 
         <InfoInlineSection>
-          <StyledTextField
+          <FormTextField<PaymentFormData>
             fullWidth
             label="Expiry Date"
             placeholder="MM/YY"
-            {...register("expiryDate")}
+            name="expiryDate"
+            register={register}
+            errors={errors}
             onInput={(e) => {
               const target = e.target as HTMLInputElement;
 
@@ -213,40 +182,22 @@ export default function PaymentForm() {
               }
               target.value = value;
             }}
-            error={!!errors.expiryDate}
-            helperText={errors.expiryDate?.message}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <ColoredInputAdornment position="start">
-                    <CalendarTodayIcon />
-                  </ColoredInputAdornment>
-                ),
-              },
-            }}
+            icon={<CalendarTodayIcon />}
           />
-          <StyledTextField
+          <FormTextField<PaymentFormData>
             fullWidth
             label="CVV"
             placeholder="123"
-            {...register("cvv")}
+            name="cvv"
+            register={register}
+            errors={errors}
             onInput={(e) => {
               const target = e.target as HTMLInputElement;
               // Limit to max 4 digits and only numeric
               const value = target.value.replace(/\D/g, "").slice(0, 4);
               target.value = value;
             }}
-            error={!!errors.cvv}
-            helperText={errors.cvv?.message}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <ColoredInputAdornment position="start">
-                    <LockIcon />
-                  </ColoredInputAdornment>
-                ),
-              },
-            }}
+            icon={<LockIcon />}
           />
         </InfoInlineSection>
       </InfoGrid>
