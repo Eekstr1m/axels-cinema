@@ -1,7 +1,8 @@
-import { styled } from "@mui/material/styles";
+import { alpha, styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
 export const HeaderPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -11,10 +12,13 @@ export const HeaderPaper = styled(Paper)(({ theme }) => ({
   borderRadius: theme.spacing(2),
 }));
 
-export const HeaderBox = styled(Box)(({ theme }) => ({
+export const HeaderBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "renderProfileButton",
+})<{ renderProfileButton: boolean }>(({ theme, renderProfileButton }) => ({
   display: "flex",
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: renderProfileButton ? "space-between" : "center",
+  flexWrap: "wrap",
   gap: theme.spacing(2),
 
   svg: {
@@ -22,6 +26,26 @@ export const HeaderBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+export const HeaderBrand = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing(2),
+}));
+
 export const HeaderTitle = styled(Typography)({
   fontWeight: 700,
 });
+
+export const HeaderActionButton = styled(Button)(({ theme }) => ({
+  color: "white",
+  borderColor: alpha(theme.palette.common.white, 0.6),
+  backgroundColor: alpha(theme.palette.common.white, 0.12),
+  textTransform: "none",
+  fontWeight: 600,
+  padding: theme.spacing(1, 2.5),
+  borderRadius: theme.spacing(1),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.2),
+    borderColor: alpha(theme.palette.common.white, 0.8),
+  },
+}));

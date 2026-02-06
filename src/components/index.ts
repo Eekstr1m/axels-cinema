@@ -5,3 +5,4 @@ export { default as PaymentForm } from "./PaymentForm";
 export { default as Header } from "./Header";
 export { default as FormTextField } from "./common/FormTextField";
 export { default as FormSubmitButton } from "./common/FormSubmitButton";
+export { default as CenteredLoading } from "./common/CenteredLoading";

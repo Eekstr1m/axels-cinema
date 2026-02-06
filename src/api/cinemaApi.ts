@@ -1,5 +1,8 @@
 import axios, { type AxiosResponse } from "axios";
 
+// Interceptors
+import { authInterceptor } from "./api-interceptor";
+
 // Interfaces
 import type { RefreshTokenResponse } from "../interfaces/auth.interface";
 import type {
@@ -11,13 +14,7 @@ import type {
   DetailedSession,
   Session,
 } from "../interfaces/sessions.interface";
-
-// Redux
-import { setCredentials } from "../redux/authSlice";
-import { store } from "../redux/store";
-
-// Interceptors
-import { authInterceptor } from "./api-interceptor";
+import type { DetailedUser } from "../interfaces/user.interface";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -34,10 +31,31 @@ export const login = async (email: string, password: string) => {
     { email, password },
   );
 
-  const { accessToken, id } = response.data;
-  if (accessToken) {
-    store.dispatch(setCredentials({ accessToken, userId: id }));
-  }
+  return response.data;
+};
+
+export const logout = async () => {
+  const response: AxiosResponse<{ message: string }> =
+    await instance.post("/auth/logout");
+
+  return response.data;
+};
+
+export const authRegister = async (
+  email: string,
+  password: string,
+  fullName: string,
+  phone: string,
+) => {
+  const response: AxiosResponse<RefreshTokenResponse> = await instance.post(
+    "/auth/register",
+    {
+      email,
+      password,
+      fullName,
+      phone,
+    },
+  );
 
   return response.data;
 };
@@ -87,6 +105,13 @@ export const postBookingData = async (bookingData: BookingData) => {
     "/booking",
     bookingData,
   );
+
+  return response.data;
+};
+
+export const fetchUserData = async () => {
+  const response: AxiosResponse<DetailedUser> =
+    await instance.get("/users/auth-user");
 
   return response.data;
 };

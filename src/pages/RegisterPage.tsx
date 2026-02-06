@@ -6,11 +6,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
+import { registerUser } from "../redux/authSlice";
 
 // MUI
 import Typography from "@mui/material/Typography";
 import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
+import PersonIcon from "@mui/icons-material/Person";
+import PhoneIcon from "@mui/icons-material/Phone";
 
 // Components
 import {
@@ -26,17 +29,16 @@ import {
   CardTitle,
   FormStack,
   HomeButton,
-  LoginCard,
-  LoginGrid,
-  LoginPageWrapper,
-} from "../styled/pages/LoginPage.styled";
+  RegisterCard,
+  RegisterGrid,
+  RegisterPageWrapper,
+} from "../styled/pages/RegisterPage.styled";
 
 // Other
-import type { LoginFormData } from "../interfaces/auth.interface";
-import { loginValidationSchema } from "../utils/loginValidationSchema";
-import { loginUser } from "../redux/authSlice";
+import type { RegisterFormData } from "../interfaces/auth.interface";
+import { registerValidationSchema } from "../utils/registerValidationSchema";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userId, authInitialized, errorMessage } = useSelector(
@@ -54,37 +56,48 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: yupResolver(loginValidationSchema) as Resolver<LoginFormData>,
+  } = useForm<RegisterFormData>({
+    resolver: yupResolver(
+      registerValidationSchema,
+    ) as Resolver<RegisterFormData>,
     mode: "onBlur",
   });
 
   if (!authInitialized) return <CenteredLoading />;
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     setIsSubmitting(true);
-    dispatch(loginUser({ email: data.email, password: data.password }));
+    dispatch(registerUser(data));
     setIsSubmitting(false);
-    navigate("/profile");
   };
 
   return (
-    <LoginPageWrapper>
-      <LoginGrid>
+    <RegisterPageWrapper>
+      <RegisterGrid>
         {/* Header */}
         <Header />
 
-        <LoginCard elevation={0}>
+        <RegisterCard elevation={0}>
           <CardHeader>
-            <CardTitle variant="h4">Welcome back</CardTitle>
+            <CardTitle variant="h4">Create your account</CardTitle>
             <Typography variant="body2" color="textSecondary">
-              Please sign in to your account or return to{" "}
+              Join to manage your bookings or return to{" "}
               <HomeButton to="/">movies page</HomeButton>.
             </Typography>
           </CardHeader>
 
           <FormStack onSubmit={handleSubmit(onSubmit)}>
-            <FormTextField<LoginFormData>
+            <FormTextField<RegisterFormData>
+              label="Full name"
+              type="text"
+              placeholder="Your name"
+              name="fullName"
+              register={register}
+              errors={errors}
+              icon={<PersonIcon fontSize="small" />}
+            />
+
+            <FormTextField<RegisterFormData>
               label="Email"
               type="email"
               placeholder="you@example.com"
@@ -94,11 +107,31 @@ export default function LoginPage() {
               icon={<EmailIcon fontSize="small" />}
             />
 
-            <FormTextField<LoginFormData>
+            <FormTextField<RegisterFormData>
+              label="Phone Number"
+              type="tel"
+              placeholder="+1 234 567 8901"
+              name="phone"
+              register={register}
+              errors={errors}
+              icon={<PhoneIcon fontSize="small" />}
+            />
+
+            <FormTextField<RegisterFormData>
               label="Password"
               type="password"
-              placeholder="Enter your password"
+              placeholder="Create a password"
               name="password"
+              register={register}
+              errors={errors}
+              icon={<LockIcon fontSize="small" />}
+            />
+
+            <FormTextField<RegisterFormData>
+              label="Confirm password"
+              type="password"
+              placeholder="Repeat your password"
+              name="confirmPassword"
               register={register}
               errors={errors}
               icon={<LockIcon fontSize="small" />}
@@ -110,15 +143,15 @@ export default function LoginPage() {
               </Typography>
             )}
 
-            <FormSubmitButton text="Sign In" disabled={isSubmitting} />
+            <FormSubmitButton text="Create Account" disabled={isSubmitting} />
 
             <Typography variant="body2" color="textSecondary">
-              New here?{" "}
-              <HomeButton to="/register">Create your account</HomeButton>.
+              Already have an account?{" "}
+              <HomeButton to="/login">Sign in</HomeButton>.
             </Typography>
           </FormStack>
-        </LoginCard>
-      </LoginGrid>
-    </LoginPageWrapper>
+        </RegisterCard>
+      </RegisterGrid>
+    </RegisterPageWrapper>
   );
 }

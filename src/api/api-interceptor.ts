@@ -33,6 +33,12 @@ export const authInterceptor = (instance: AxiosInstance) => {
         _retry?: boolean;
       };
 
+      // Avoid self-refresh loop when the refresh request itself fails.
+      if (originalConfig.url?.includes("/auth/refresh")) {
+        store.dispatch(clearCredentials());
+        return Promise.reject(error);
+      }
+
       if (error.response?.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
 

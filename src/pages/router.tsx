@@ -9,6 +9,7 @@ import {
   LoginPage,
   RequireAuth,
   ProfilePage,
+  RegisterPage,
 } from ".";
 
 import { useDispatch } from "react-redux";
@@ -31,6 +32,7 @@ export const Router = () => {
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/error" element={<ErrorPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<RequireAuth />}>
           <Route path="/profile" element={<ProfilePage />} />

@@ -1,14 +1,14 @@
+import { Navigate, Outlet } from "react-router";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
-import { Navigate, Outlet } from "react-router";
-import CircularProgress from "@mui/material/CircularProgress";
+import { CenteredLoading } from "../components";
 
 export default function RequireAuth() {
-  const { accessToken, authInitialized } = useSelector(
+  const { accessToken, authInitialized, authLoading } = useSelector(
     (state: RootState) => state.auth,
   );
 
-  if (!authInitialized) return <CircularProgress />;
+  if (authLoading || !authInitialized) return <CenteredLoading />;
   if (!accessToken) return <Navigate to="/login" replace />;
 
   return <Outlet />;

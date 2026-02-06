@@ -1,5 +1,18 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+
+// Components
+import { CenteredLoading, Header } from "../components";
+
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
+import { loadUserData, logoutUser } from "../redux/authSlice";
+
+// MUI Components
 import Avatar from "@mui/material/Avatar";
 
+// MUI Icons
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
@@ -9,8 +22,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ConfirmationNumberOutlinedIcon from "@mui/icons-material/ConfirmationNumberOutlined";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 
-import Header from "../components/Header";
-
+// Styled Components
 import {
   AvatarRing,
   BookingItem,
@@ -34,21 +46,27 @@ import {
   PrimaryActionButton,
 } from "../styled/pages/ProfilePage.styled";
 
-const profile = {
-  name: "Olivia Carter",
-  email: "olivia.carter@email.com",
-  phone: "+1 (415) 555-2189",
-  memberSince: "Sep 2022",
-  avatarUrl: "https://placehold.co/200x200",
-};
-
-const stats = [
-  { label: "Movies watched", value: "86", icon: <MovieCreationIcon /> },
-  { label: "Seats booked", value: "214", icon: <EventSeatIcon /> },
-  { label: "Total spent", value: "$1,234", icon: <CreditCardIcon /> },
-];
+// Other
+import { parseDate } from "../utils/utils";
 
 export default function ProfilePage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.userData);
+
+  useEffect(() => {
+    if (!user || !user.userId) {
+      dispatch(loadUserData());
+    }
+  }, [dispatch, user, user?.userId]);
+
+  if (!user || !user.userId) return <CenteredLoading />;
+
+  const onLogout = () => {
+    dispatch(logoutUser());
+    navigate("/");
+  };
+
   return (
     <PageContainer maxWidth="lg">
       <Header />
@@ -57,35 +75,36 @@ export default function ProfilePage() {
           <HeroContent>
             <AvatarRing>
               <Avatar
-                src={profile.avatarUrl}
-                alt={profile.name}
+                src={"https://placehold.co/200x200"}
+                alt={user.fullName}
                 sx={{ width: 96, height: 96 }}
               />
             </AvatarRing>
 
             <HeroTextBlock>
-              <HeroTitle variant="h3">{profile.name}</HeroTitle>
+              <HeroTitle variant="h3">{user.fullName}</HeroTitle>
               <MetaRow>
                 <span>
-                  <CalendarTodayIcon /> Member since {profile.memberSince}
+                  <CalendarTodayIcon /> Member since{" "}
+                  {user.createdAt && parseDate(user.createdAt).longDateYear}
                 </span>
               </MetaRow>
               <MetaRow>
                 <span>
                   <EmailOutlinedIcon />
-                  {profile.email}
+                  {user.email}
                 </span>
               </MetaRow>
               <MetaRow>
                 <span>
                   <PhoneIphoneIcon />
-                  {profile.phone}
+                  {user.phone}
                 </span>
               </MetaRow>
             </HeroTextBlock>
 
             <HeroActions>
-              <PrimaryActionButton variant="contained">
+              <PrimaryActionButton onClick={onLogout} variant="contained">
                 Log Out
               </PrimaryActionButton>
             </HeroActions>
@@ -93,13 +112,21 @@ export default function ProfilePage() {
         </HeroCard>
 
         <StatsGrid>
-          {stats.map((stat) => (
-            <StatCard key={stat.label}>
-              {stat.icon}
-              <StatLabel variant="body2">{stat.label}</StatLabel>
-              <StatValue variant="h5">{stat.value}</StatValue>
-            </StatCard>
-          ))}
+          <StatCard>
+            <MovieCreationIcon />
+            <StatLabel variant="body2">Movies watched</StatLabel>
+            <StatValue variant="h5">{user.totalMoviesBooked}</StatValue>
+          </StatCard>
+          <StatCard>
+            <EventSeatIcon />
+            <StatLabel variant="body2">Seats booked</StatLabel>
+            <StatValue variant="h5">{user.totalSeatsBooked}</StatValue>
+          </StatCard>
+          <StatCard>
+            <CreditCardIcon />
+            <StatLabel variant="body2">Total spent</StatLabel>
+            <StatValue variant="h5">${user.totalMoneySpent}</StatValue>
+          </StatCard>
         </StatsGrid>
 
         <ContentGrid>

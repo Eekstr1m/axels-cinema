@@ -22,7 +22,7 @@ export const store = configureStore({
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
 });
 
-// Run the cinema saga
+// Run the sagas
 sagaMiddleware.run(cinemaSaga);
 sagaMiddleware.run(authSaga);
 

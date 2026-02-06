@@ -46,7 +46,7 @@ import {
 } from "../styled/components/BookingModal.styled";
 
 // Other
-import { formatDate } from "../utils/utils";
+import { parseDate } from "../utils/utils";
 import type { DetailedSession } from "../interfaces/sessions.interface";
 import type { BookingSeat, Seat } from "../interfaces/seat.interface";
 
@@ -148,7 +148,7 @@ export default function BookingModal({
           <InfoItem>
             <CalendarTodayIcon />
             <Typography variant="body1">
-              <strong>Date:</strong> {formatDate(date)}
+              <strong>Date:</strong> {parseDate(date).shortDate}
             </Typography>
           </InfoItem>
 

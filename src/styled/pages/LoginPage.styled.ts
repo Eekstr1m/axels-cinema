@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { Link } from "react-router";
 
 export const LoginPageWrapper = styled(Box)(({ theme }) => ({
   minHeight: "100vh",
@@ -152,6 +153,7 @@ export const LoginCard = styled(Paper)(({ theme }) => ({
 
 export const CardHeader = styled(Box)(({ theme }) => ({
   display: "flex",
+  flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   gap: theme.spacing(1.5),
@@ -159,6 +161,19 @@ export const CardHeader = styled(Box)(({ theme }) => ({
 
 export const CardTitle = styled(Typography)(() => ({
   fontWeight: 700,
+}));
+
+export const HomeButton = styled(Link)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  fontWeight: 500,
+  textDecoration: "none",
+  borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
+  paddingBottom: 2,
+  transition: "border-color 0.3s",
+
+  "&:hover": {
+    borderColor: theme.palette.primary.main,
+  },
 }));
 
 export const CardSubtitle = styled(Typography)(({ theme }) => ({

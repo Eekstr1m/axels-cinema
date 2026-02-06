@@ -30,7 +30,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import { initializeMovies } from "../redux/cinemaSlice";
 import type { RootState } from "../redux/store";
-import { formatDuration, formatReleaseDate } from "../utils/utils";
+import { formatDuration, parseDate } from "../utils/utils";
 
 export default function MoviesPage() {
   const dispatch = useDispatch();
@@ -65,7 +65,7 @@ export default function MoviesPage() {
   return (
     <PageContainer maxWidth="lg">
       {/* Header */}
-      <Header />
+      <Header renderProfileButton />
 
       {/* Movies Grid */}
       <MoviesGrid>
@@ -111,7 +111,7 @@ export default function MoviesPage() {
                 </MovieInfoItem>
                 <MovieInfoItem>
                   <CalendarTodayIcon />
-                  <span>{formatReleaseDate(movie.releaseDate)}</span>
+                  <span>{parseDate(movie.releaseDate).longDateYear}</span>
                 </MovieInfoItem>
               </MovieInfoBox>
 
