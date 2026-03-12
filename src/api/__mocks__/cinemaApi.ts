@@ -1,0 +1,10 @@
+export const login = jest.fn();
+export const logout = jest.fn();
+export const authRegister = jest.fn();
+export const refetchToken = jest.fn();
+export const fetchMovies = jest.fn();
+export const fetchSessionsDatesByMovieId = jest.fn();
+export const fetchSessionsByDateForMovie = jest.fn();
+export const fetchSessionById = jest.fn();
+export const postBookingData = jest.fn();
+export const fetchUserData = jest.fn();
