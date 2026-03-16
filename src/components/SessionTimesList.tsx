@@ -1,3 +1,5 @@
+import { NotFoundException } from "../components";
+
 // Styled Components
 import {
   SessionCard,
@@ -12,6 +14,7 @@ import Box from "@mui/material/Box";
 
 // MUI Icons
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import EventBusyIcon from "@mui/icons-material/EventBusy";
 
 // Other
 import type { Session } from "../interfaces/sessions.interface";
@@ -19,12 +22,22 @@ import type { Session } from "../interfaces/sessions.interface";
 export default function SessionTimesList({
   sessions,
   onSessionSelect,
+  selectedDate,
 }: {
   sessions: Session[] | null;
   onSessionSelect: (sessionId: string) => void;
+  selectedDate: string;
 }) {
-  if (!sessions || sessions.length === 0) {
-    return null;
+  if (sessions === null) return null;
+
+  if (sessions.length === 0) {
+    return (
+      <NotFoundException
+        icon={<EventBusyIcon />}
+        title="Sessions"
+        subtitle={`No session times available for the selected date${selectedDate ? ` (${selectedDate})` : ""}.`}
+      />
+    );
   }
 
   return (

@@ -1,5 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { call, put, takeLatest } from "redux-saga/effects";
+import type { AxiosError } from "axios";
 
 import {
   authRegister,
@@ -42,7 +43,10 @@ export function* initializeAuthSaga() {
     // Load user data after successful auth initialization
     yield put(loadUserData());
   } catch (error) {
-    console.error("Error initializing auth:", error);
+    const status = (error as AxiosError)?.response?.status;
+    if (status !== 401) {
+      console.error("Error initializing auth:", error);
+    }
     yield put(setInitialized(true));
   }
 }

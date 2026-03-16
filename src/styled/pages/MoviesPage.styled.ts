@@ -151,19 +151,3 @@ export const ErrorBox = styled(Box)({
   alignItems: "center",
   minHeight: "300px",
 });
-
-export const EmptyStateBox = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  minHeight: "300px",
-  textAlign: "center",
-  gap: theme.spacing(2),
-
-  svg: {
-    fontSize: "80px",
-    color: theme.palette.text.secondary,
-    opacity: 0.5,
-  },
-}));

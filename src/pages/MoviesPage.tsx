@@ -1,8 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
-// MUI Components
-import Typography from "@mui/material/Typography";
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import { initializeMovies } from "../redux/cinemaSlice";
+import type { RootState } from "../redux/store";
+
+// Components
+import { NotFoundException, Header } from "../components";
 
 // MUI Icons
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -12,7 +17,6 @@ import MovieCreationIcon from "@mui/icons-material/MovieCreation";
 // Styled Components
 import {
   BookingButton,
-  EmptyStateBox,
   GenreChip,
   MovieCard,
   MovieContentBox,
@@ -26,10 +30,6 @@ import {
   PageContainer,
 } from "../styled/pages/MoviesPage.styled";
 
-import { useDispatch, useSelector } from "react-redux";
-import Header from "../components/Header";
-import { initializeMovies } from "../redux/cinemaSlice";
-import type { RootState } from "../redux/store";
 import { formatDuration, parseDate } from "../utils/utils";
 
 export default function MoviesPage() {
@@ -50,15 +50,14 @@ export default function MoviesPage() {
 
   if (!movies || movies.length === 0) {
     return (
-      <EmptyStateBox>
-        <MovieCreationIcon />
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          No movies found
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Please try again later
-        </Typography>
-      </EmptyStateBox>
+      <PageContainer maxWidth="lg">
+        <Header renderProfileButton />
+        <NotFoundException
+          icon={<MovieCreationIcon />}
+          title="No movies found"
+          subtitle="Please try again later"
+        />
+      </PageContainer>
     );
   }
 

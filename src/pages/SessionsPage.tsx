@@ -2,12 +2,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { useEffect } from "react";
 
+// MUI Icons
+import MovieOffIcon from "@mui/icons-material/SearchOff";
+
 // Components
-import { BookingModal, DateSelector, SessionTimesList } from "../components";
+import {
+  BookingModal,
+  DateSelector,
+  Header,
+  MovieBanner,
+  NotFoundException,
+  SessionTimesList,
+} from "../components";
 
 // Redux
 import type { RootState } from "../redux/store";
 import {
+  initializeMovies,
   loadMovieSessionsDates,
   loadSelectedSessions,
   loadSelectedSessionTime,
@@ -16,21 +27,14 @@ import {
   setSelectedSessionTimeId,
 } from "../redux/cinemaSlice";
 
-// MUI Icons
-import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
-
 // Styled Components
-import {
-  CinemaTitle,
-  HeaderBox,
-  HeaderPaper,
-  StyledPaper,
-} from "../styled/pages/SessionsPage.styled";
+import { SessionContainer } from "../styled/pages/SessionsPage.styled";
 
 export default function MovieSessions() {
   const { movieId } = useParams<{ movieId: string }>();
   const dispatch = useDispatch();
   const {
+    movies,
     sessionsDates,
     selectedSessions,
     selectedDate,
@@ -38,11 +42,16 @@ export default function MovieSessions() {
     selectedSessionTime,
   } = useSelector((state: RootState) => state.cinema);
 
+  const movie = movies.find((m) => m._id === movieId);
+
   useEffect(() => {
     if (movieId) {
       dispatch(loadMovieSessionsDates(movieId));
     }
-  }, [dispatch, movieId]);
+    if (movies.length === 0) {
+      dispatch(initializeMovies());
+    }
+  }, [dispatch, movieId, movies.length]);
 
   const handleDateSelect = (date: string) => {
     dispatch(setSelectedDate(date));
@@ -59,15 +68,21 @@ export default function MovieSessions() {
     dispatch(setSelectedSessionTime(null));
   };
 
+  if (!movie) {
+    return (
+      <NotFoundException
+        icon={<MovieOffIcon />}
+        title="Movie not found"
+        subtitle="The movie you are looking for does not exist."
+      />
+    );
+  }
+
   return (
-    <StyledPaper elevation={1}>
-      {/* Header */}
-      <HeaderPaper elevation={2}>
-        <HeaderBox>
-          <LocalMoviesIcon />
-          <CinemaTitle variant="h4">Axels Cinema Booking</CinemaTitle>
-        </HeaderBox>
-      </HeaderPaper>
+    <SessionContainer>
+      <Header renderProfileButton />
+
+      <MovieBanner movie={movie} />
 
       <DateSelector
         dates={sessionsDates}
@@ -78,6 +93,7 @@ export default function MovieSessions() {
       <SessionTimesList
         sessions={selectedSessions}
         onSessionSelect={handleSessionSelect}
+        selectedDate={selectedDate}
       />
 
       <BookingModal
@@ -86,6 +102,6 @@ export default function MovieSessions() {
         sessionDetails={selectedSessionTime}
         date={selectedDate}
       />
-    </StyledPaper>
+    </SessionContainer>
   );
 }

@@ -47,6 +47,7 @@ export function* initializeMoviesSaga() {
     yield put(
       setErrorMessage("Failed to load movies. Please try again later."),
     );
+    yield put(setMovies([]));
   }
 }
 
@@ -67,6 +68,7 @@ export function* loadMovieSessionsDatesSaga(action: PayloadAction<string>) {
     yield put(
       setErrorMessage("Failed to load sessions list. Please try again later."),
     );
+    yield put(setMovieSessionsDates([]));
     console.error("Error loading sessions list:", error);
   }
 }
@@ -95,6 +97,7 @@ export function* loadSelectedSessionsSaga(
     yield put(
       setErrorMessage("Failed to load sessions. Please try again later."),
     );
+    yield put(setSelectedSessions([]));
     console.error("Error loading sessions:", error);
   }
 }
@@ -116,6 +119,7 @@ export function* loadSelectedSessionTimeSaga(action: PayloadAction<string>) {
       setErrorMessage("Failed to load session. Please try again later."),
     );
     console.error("Error loading session:", error);
+    yield put(setSelectedSessionTime(null));
   }
 }
 

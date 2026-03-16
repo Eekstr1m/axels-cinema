@@ -27,7 +27,9 @@ export default function Header({
       <HeaderBox renderProfileButton={renderProfileButton}>
         <HeaderBrand>
           <LocalMoviesIcon sx={{ fontSize: 40 }} />
-          <HeaderTitle variant="h4">Axels Cinema</HeaderTitle>
+          <HeaderTitle variant="h4" href="/">
+            Axels Cinema
+          </HeaderTitle>
         </HeaderBrand>
         {renderProfileButton && (
           <HeaderActionButton variant="outlined" onClick={handleAuthNavigation}>

@@ -1,3 +1,8 @@
+import NotFoundException from "./NotFoundException";
+
+import EventIcon from "@mui/icons-material/Event";
+import EventBusyIcon from "@mui/icons-material/EventBusy";
+
 // Styled Components
 import {
   DateCard,
@@ -11,7 +16,6 @@ import {
 } from "../styled/components/DateSelector.styled";
 
 // MUI Icons
-import EventIcon from "@mui/icons-material/Event";
 import { parseDate } from "../utils/utils";
 
 // Other
@@ -25,6 +29,16 @@ export default function DateSelector({
   selectedDate: string;
   onDateSelect: (date: string) => void;
 }) {
+  if (!dates || dates.length === 0) {
+    return (
+      <NotFoundException
+        icon={<EventBusyIcon />}
+        title="Sessions"
+        subtitle="No available sessions for this movie at the moment."
+      />
+    );
+  }
+
   return (
     <DateSelectorContainer>
       <DatesHeading>

@@ -1,7 +1,7 @@
 import { alpha, styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 
 export const HeaderPaper = styled(Paper)(({ theme }) => ({
@@ -32,8 +32,16 @@ export const HeaderBrand = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
-export const HeaderTitle = styled(Typography)({
+export const HeaderTitle = styled(Link)({
   fontWeight: 700,
+  textDecoration: "none",
+  transition: "all 0.3s",
+  color: "inherit",
+  cursor: "pointer",
+
+  "&:hover": {
+    textShadow: "0 0px 15px rgba(255, 255, 255, 0.5)",
+  },
 });
 
 export const HeaderActionButton = styled(Button)(({ theme }) => ({
