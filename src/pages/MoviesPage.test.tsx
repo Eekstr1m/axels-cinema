@@ -1,11 +1,12 @@
-import { configureStore } from "@reduxjs/toolkit";
-import type { Movie } from "../interfaces/movies.interface";
-import cinemaReducer from "../redux/cinemaSlice";
-import MoviesPage from "./MoviesPage";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
-import userEvent from "@testing-library/user-event";
+import cinemaReducer from "../redux/cinemaSlice";
+import authReducer from "../redux/authSlice";
+import MoviesPage from "./MoviesPage";
+import type { Movie } from "../interfaces/movies.interface";
 
 const mockMovies: Movie[] = [
   {
@@ -35,12 +36,14 @@ const mockMovies: Movie[] = [
 const emptyStore = configureStore({
   reducer: {
     cinema: cinemaReducer,
+    auth: authReducer,
   },
 });
 
 const moviesStore = configureStore({
   reducer: {
     cinema: cinemaReducer,
+    auth: authReducer,
   },
   preloadedState: {
     cinema: {

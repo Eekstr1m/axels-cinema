@@ -128,7 +128,7 @@ export default function RegisterPage() {
             />
 
             <FormTextField<RegisterFormData>
-              label="Confirm password"
+              label="Confirm Password"
               type="password"
               placeholder="Repeat your password"
               name="confirmPassword"
