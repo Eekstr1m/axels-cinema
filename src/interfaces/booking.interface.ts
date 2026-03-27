@@ -1,6 +1,7 @@
 import type { InferType } from "yup";
 import type { BookingSeat } from "./seat.interface";
 import type { paymentValidationSchema } from "../utils/paymentValidationSchema";
+import type { CreatedUser } from "./user.interface";
 
 export interface BookingSummary {
   sessionId: string;
@@ -23,6 +24,11 @@ export interface SavedBookingData extends BookingData {
   _id: string;
   updatedAt: string;
   createdAt: string;
+}
+
+export interface SavedBookingDataResponse {
+  booking: SavedBookingData;
+  user: CreatedUser | null;
 }
 
 export type PaymentStatus = "idle" | "processing" | "successful" | "failed";

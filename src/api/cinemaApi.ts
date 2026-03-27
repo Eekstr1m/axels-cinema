@@ -7,7 +7,7 @@ import { authInterceptor } from "./api-interceptor";
 import type { RefreshTokenResponse } from "../interfaces/auth.interface";
 import type {
   BookingData,
-  SavedBookingData,
+  SavedBookingDataResponse,
 } from "../interfaces/booking.interface";
 import type { Movie } from "../interfaces/movies.interface";
 import type {
@@ -101,7 +101,7 @@ export const fetchSessionById = async (sessionId: string) => {
 };
 
 export const postBookingData = async (bookingData: BookingData) => {
-  const response: AxiosResponse<SavedBookingData> = await instance.post(
+  const response: AxiosResponse<SavedBookingDataResponse> = await instance.post(
     "/booking",
     bookingData,
   );

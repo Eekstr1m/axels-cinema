@@ -10,3 +10,13 @@ export interface DetailedUser {
   totalSeatsBooked: number;
   totalMoneySpent: number;
 }
+
+export interface CreatedUser {
+  _id: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}

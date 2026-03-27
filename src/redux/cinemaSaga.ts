@@ -1,5 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, select } from "redux-saga/effects";
 
 // API
 import {
@@ -26,10 +26,12 @@ import {
 } from "./cinemaSlice";
 
 // Types
+import type { RootState } from "./store";
 import type {
   BookingData,
-  SavedBookingData,
+  SavedBookingDataResponse,
 } from "../interfaces/booking.interface";
+import type { DetailedUser } from "../interfaces/user.interface";
 import type { Movie } from "../interfaces/movies.interface";
 import type {
   DetailedSession,
@@ -132,11 +134,24 @@ export function* sendBookingDataSaga(action: PayloadAction<BookingData>) {
 
     yield put(setPaymentStatus("processing"));
 
-    const bookingData = action.payload;
+    const bookingData: BookingData = { ...action.payload };
 
-    const response: SavedBookingData = yield call(postBookingData, bookingData);
+    // If a user is authenticated, enforce their profile info
+    const user = (yield select(
+      (state: RootState) => state.auth.userData,
+    )) as DetailedUser | null;
+    if (user) {
+      bookingData.fullName = user.fullName ?? bookingData.fullName;
+      bookingData.email = user.email ?? bookingData.email;
+      bookingData.phone = user.phone ?? bookingData.phone;
+    }
 
-    if (!response || !response._id) {
+    const response: SavedBookingDataResponse = yield call(
+      postBookingData,
+      bookingData,
+    );
+
+    if (!response || !response.booking?._id) {
       yield put(setPaymentStatus("failed"));
       throw new Error("Booking failed. Please try again.");
     }

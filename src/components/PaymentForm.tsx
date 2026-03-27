@@ -42,6 +42,7 @@ export default function PaymentForm() {
   const { bookingSummary, paymentStatus } = useSelector(
     (state: RootState) => state.cinema,
   );
+  const user = useSelector((state: RootState) => state.auth.userData);
 
   const {
     register,
@@ -50,6 +51,14 @@ export default function PaymentForm() {
   } = useForm<PaymentFormData>({
     resolver: yupResolver(paymentValidationSchema) as Resolver<PaymentFormData>,
     mode: "onBlur",
+    defaultValues: {
+      fullName: user?.fullName ?? "",
+      email: user?.email ?? "",
+      phone: user?.phone ?? "",
+      cardNumber: "",
+      expiryDate: "",
+      cvv: "",
+    },
   });
 
   if (!bookingSummary) {
@@ -57,6 +66,10 @@ export default function PaymentForm() {
   }
 
   const onSubmit = (data: PaymentFormData) => {
+    const finalFullName = user?.fullName ?? data.fullName;
+    const finalEmail = user?.email ?? data.email;
+    const finalPhone = user?.phone ?? data.phone;
+
     const bookingData = {
       sessionId: bookingSummary.sessionId,
       movieId: bookingSummary.movieId,
@@ -65,9 +78,9 @@ export default function PaymentForm() {
       bookedSeats: bookingSummary.bookedSeats,
       pricePerSeat: bookingSummary.pricePerSeat,
       totalPrice: bookingSummary.totalPrice,
-      fullName: data.fullName,
-      email: data.email,
-      phone: data.phone,
+      fullName: finalFullName,
+      email: finalEmail,
+      phone: finalPhone,
     };
     dispatch(setBookingData(bookingData));
     dispatch(sendBookingData(bookingData));
@@ -109,10 +122,12 @@ export default function PaymentForm() {
           fullWidth
           label="Full Name"
           placeholder="John Doe"
+          defaultValue={user?.fullName ?? ""}
           name="fullName"
           register={register}
           errors={errors}
           icon={<PersonIcon />}
+          inputProps={{ readOnly: !!user }}
         />
         <InfoInlineSection>
           <FormTextField<PaymentFormData>
@@ -120,19 +135,23 @@ export default function PaymentForm() {
             label="Email"
             type="email"
             placeholder="john.doe@example.com"
+            defaultValue={user?.email ?? ""}
             name="email"
             register={register}
             errors={errors}
             icon={<EmailIcon />}
+            inputProps={{ readOnly: !!user }}
           />
           <FormTextField<PaymentFormData>
             fullWidth
             label="Phone Number"
             placeholder="+1 234 567 8901"
+            defaultValue={user?.phone ?? ""}
             name="phone"
             register={register}
             errors={errors}
             icon={<PhoneIcon />}
+            inputProps={{ readOnly: !!user }}
           />
         </InfoInlineSection>
       </InfoGrid>
